@@ -18,4 +18,7 @@
    eJztl31LwzAQh1MF3wbTuU1ldIKoIKJj3//TecUEjzMvl7SpF7w/Htgyuv6e3HFpX4wx743zCjwDHXDSKKfAk/W4BDbAbWNsgQXxGL4/NobLXeLR2VrWypbz/2M8ateuJIt6/C8POs85fS/RA8/zLfM6qR6LzOukevTmu6f2M3m4+9Fepj2eyoPnP31OWJv0+VCSBXtcEXA/hH4r6aXUfpdkqeXR2z2kmTtGPaV4rMzPbBo+r0nGDVmT6kFrklMLaR64Jjm1mMKDvn+4+63M72d+PE9CswfXJFULPIf2mVl858cZcB7hwrMntH9oTXqUzVcL50j3mJvF57EEriPcBGobc6F7mnJwHtwsU3rEXEKEHP7aI8cl5iDBg+OScpDiEXPhOEjyCJ0xOdeO8bgD7iM8zOjBzZJ6bg/B6YuxHjlZsAc9J6fAd17Uuo/z4M58Lm8W7vpY1EM9WvY4NOpxtHDX1aOux9yohyzUQxbqIQv1kIV6yEI9ZDF4fAC7xvkEvgA+2+7A
   </data>
  </layer>
+ <objectgroup name="Objects" width="50" height="50">
+  <object name="SpawnPoint" x="794" y="1225"/>
+ </objectgroup>
 </map>
