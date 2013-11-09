@@ -141,6 +141,13 @@
 		0936C621182EC8B0008C37BE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0936C620182EC8B0008C37BE /* AppDelegate.m */; };
 		0936C624182EC8B0008C37BE /* HelloWorldLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 0936C623182EC8B0008C37BE /* HelloWorldLayer.m */; };
 		0936C627182EC8B0008C37BE /* IntroLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 0936C626182EC8B0008C37BE /* IntroLayer.m */; };
+		0936C634182EC9DC008C37BE /* move.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0936C62D182EC9DB008C37BE /* move.caf */; };
+		0936C635182EC9DC008C37BE /* TileMap.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0936C62E182EC9DB008C37BE /* TileMap.caf */; };
+		0936C636182EC9DC008C37BE /* pickup.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0936C62F182EC9DB008C37BE /* pickup.caf */; };
+		0936C637182EC9DC008C37BE /* hit.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0936C630182EC9DB008C37BE /* hit.caf */; };
+		0936C638182EC9DC008C37BE /* meta_tiles.png in Resources */ = {isa = PBXBuildFile; fileRef = 0936C631182EC9DB008C37BE /* meta_tiles.png */; };
+		0936C639182EC9DC008C37BE /* Player.png in Resources */ = {isa = PBXBuildFile; fileRef = 0936C632182EC9DC008C37BE /* Player.png */; };
+		0936C63A182EC9DC008C37BE /* tmw_desert_spacing.png in Resources */ = {isa = PBXBuildFile; fileRef = 0936C633182EC9DC008C37BE /* tmw_desert_spacing.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -425,6 +432,13 @@
 		0936C623182EC8B0008C37BE /* HelloWorldLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelloWorldLayer.m; sourceTree = "<group>"; };
 		0936C625182EC8B0008C37BE /* IntroLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntroLayer.h; sourceTree = "<group>"; };
 		0936C626182EC8B0008C37BE /* IntroLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IntroLayer.m; sourceTree = "<group>"; };
+		0936C62D182EC9DB008C37BE /* move.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = move.caf; path = Resources/Custom/move.caf; sourceTree = "<group>"; };
+		0936C62E182EC9DB008C37BE /* TileMap.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = TileMap.caf; path = Resources/Custom/TileMap.caf; sourceTree = "<group>"; };
+		0936C62F182EC9DB008C37BE /* pickup.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = pickup.caf; path = Resources/Custom/pickup.caf; sourceTree = "<group>"; };
+		0936C630182EC9DB008C37BE /* hit.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = hit.caf; path = Resources/Custom/hit.caf; sourceTree = "<group>"; };
+		0936C631182EC9DB008C37BE /* meta_tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = meta_tiles.png; path = Resources/Custom/meta_tiles.png; sourceTree = "<group>"; };
+		0936C632182EC9DC008C37BE /* Player.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Player.png; path = Resources/Custom/Player.png; sourceTree = "<group>"; };
+		0936C633182EC9DC008C37BE /* tmw_desert_spacing.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tmw_desert_spacing.png; path = Resources/Custom/tmw_desert_spacing.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -501,6 +515,7 @@
 		0936C48F182EC8AE008C37BE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				0936C63B182EC9E5008C37BE /* Custom */,
 				0936C490182EC8AE008C37BE /* Default.png */,
 				0936C492182EC8AE008C37BE /* Default@2x.png */,
 				0936C494182EC8AE008C37BE /* Default-568h@2x.png */,
@@ -879,6 +894,20 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		0936C63B182EC9E5008C37BE /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				0936C62D182EC9DB008C37BE /* move.caf */,
+				0936C62E182EC9DB008C37BE /* TileMap.caf */,
+				0936C62F182EC9DB008C37BE /* pickup.caf */,
+				0936C630182EC9DB008C37BE /* hit.caf */,
+				0936C631182EC9DB008C37BE /* meta_tiles.png */,
+				0936C632182EC9DC008C37BE /* Player.png */,
+				0936C633182EC9DC008C37BE /* tmw_desert_spacing.png */,
+			);
+			name = Custom;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -930,18 +959,25 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0936C63A182EC9DC008C37BE /* tmw_desert_spacing.png in Resources */,
 				0936C4A1182EC8AE008C37BE /* Icon.png in Resources */,
 				0936C5FF182EC8B0008C37BE /* ChangeLog in Resources */,
+				0936C639182EC9DC008C37BE /* Player.png in Resources */,
 				0936C493182EC8AE008C37BE /* Default@2x.png in Resources */,
 				0936C49D182EC8AE008C37BE /* Icon-Small.png in Resources */,
+				0936C637182EC9DC008C37BE /* hit.caf in Resources */,
 				0936C499182EC8AE008C37BE /* Icon-72.png in Resources */,
 				0936C491182EC8AE008C37BE /* Default.png in Resources */,
 				0936C49B182EC8AE008C37BE /* Icon-Small-50.png in Resources */,
 				0936C4A6182EC8AE008C37BE /* iTunesArtwork in Resources */,
 				0936C49F182EC8AE008C37BE /* Icon-Small@2x.png in Resources */,
+				0936C634182EC9DC008C37BE /* move.caf in Resources */,
+				0936C636182EC9DC008C37BE /* pickup.caf in Resources */,
 				0936C497182EC8AE008C37BE /* Default-Landscape~ipad.png in Resources */,
+				0936C635182EC9DC008C37BE /* TileMap.caf in Resources */,
 				0936C495182EC8AE008C37BE /* Default-568h@2x.png in Resources */,
 				0936C4A3182EC8AE008C37BE /* Icon@2x.png in Resources */,
+				0936C638182EC9DC008C37BE /* meta_tiles.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
