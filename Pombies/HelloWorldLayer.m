@@ -8,12 +8,16 @@
 #import "HelloWorldLayer.h"
 #import "AppDelegate.h"
 
-@interface HelloWorldLayer()
+@interface HelloWorldLayer() {
+    CGPoint _lastTouchPoint;
+}
 
 @property (strong) CCTMXTiledMap *tileMap;
 @property (strong) CCTMXLayer *background;
-@property (strong) CCSprite *player;
+@property (strong) CCPhysicsSprite *player;
 @property (strong) CCTMXLayer *meta;
+@property (atomic) cpBody *targetPointBody;
+@property (atomic) BOOL *isTouching;
 
 @end
 
@@ -27,6 +31,7 @@
     
 	// 'layer' is an autorelease object.
 	HelloWorldLayer *layer = [HelloWorldLayer node];
+
     
 	// add layer as a child to scene
 	[scene addChild: layer];
@@ -34,6 +39,44 @@
 	// return the scene
 	return scene;
 }
+
+- (void)createSpace {
+    space = cpSpaceNew();
+    space->gravity = ccp(0, -1);
+}
+
+// Add new method
+- (void)createBoxAtLocation:(CGPoint)location {
+    
+    float boxSize = 120.0;
+    float mass = 100.0;
+    cpBody *body = cpBodyNew(mass, cpMomentForBox(mass, boxSize, boxSize));
+    body->p = location;
+    cpSpaceAddBody(space, body);
+    
+    cpShape *shape = cpBoxShapeNew(body, boxSize, boxSize);
+    shape->e = 100.0;
+    shape->u = 100.0;
+    cpSpaceAddShape(space, shape);
+    
+    [self.player setCPBody:body];
+}
+
+// Add new method
+- (void)update:(ccTime)dt {
+    if (self.isTouching) {
+        CGPoint touchLocation = [self convertToNodeSpace: [[CCDirector sharedDirector] convertToGL: self->_lastTouchPoint]];
+        [self targetPointBody]->p = self->_lastTouchPoint;
+    }
+    
+    ccTime fixed_dt = [CCDirector sharedDirector].animationInterval;
+    cpSpaceStep(space, fixed_dt);
+    
+    //update camera
+    [self setViewPointCenter:_player.position];
+}
+
+
 
 -(id) init
 {
@@ -43,29 +86,36 @@
         
         [self addChild:_tileMap z:-1];
         
+        // Comment out the lines that create the label in init, and add this:
+        [self createSpace];
+
+        [self setIsTouching:NO];
         
         self.meta = [_tileMap layerNamed:@"Meta"];
         _meta.visible = NO;
         
        
         /** Init Player And Center Camera **/
-        // Inside the init method, after setting self.background
-        CCTMXObjectGroup *objectGroup = [_tileMap objectGroupNamed:@"Objects"];
-        NSAssert(objectGroup != nil, @"tile map has no objects object layer");
+        CCTMXObjectGroup *objects = [_tileMap objectGroupNamed:@"Objects"];
+        NSAssert(objects != nil, @"'Objects' object group not found");
+        NSMutableDictionary *spawnPoint = [objects objectNamed:@"SpawnPoint"];
+        NSAssert(spawnPoint != nil, @"SpawnPoint object not found");
+        int x = [[spawnPoint valueForKey:@"x"] intValue];
+        int y = [[spawnPoint valueForKey:@"y"] intValue];
         
-        NSDictionary *spawnPoint = [objectGroup objectNamed:@"SpawnPoint"];
-        int x = [spawnPoint[@"x"] integerValue];
-        int y = [spawnPoint[@"y"] integerValue];
+        _meta = [_tileMap layerNamed:@"Meta"];
+        _meta.visible = NO;
         
-        _player = [CCSprite spriteWithFile:@"Player.png"];
-        _player.position = ccp(x,y);
+        [self scheduleUpdate];
         
-        [self addChild:_player];
+        self.touchEnabled = YES;
+        
+        [self createPlayer:y x:x];
+        [self createTerrainGeometry];
         [self setViewPointCenter:_player.position];
         
-       
-        // Inside init method
-        self.touchEnabled = YES;
+        CCPhysicsDebugNode *debugNode = [CCPhysicsDebugNode debugNodeForCPSpace:space];
+        [self addChild:debugNode];
         
     }
     return self;
@@ -78,6 +128,49 @@
     return ccp(x, y);
 }
 
+- (void) createPlayer: (int) y x: (int) x {
+    float boxSize = 20.0f;
+    float mass = 1.0;
+    cpBody *body = cpBodyNew(mass, cpMomentForBox(mass, boxSize, boxSize * 2));
+    body->p = ccp(x,y);
+    cpSpaceAddBody(space, body);
+    
+    cpShape *shape = cpBoxShapeNew(body, boxSize, boxSize * 2);
+    shape->e = 1.0;
+    shape->u = 1.0;
+    cpSpaceAddShape(space, shape);
+    
+    _player = [CCPhysicsSprite spriteWithFile:@"Player.png"];
+    
+    [self setPlayer:_player];
+    [self.player setCPBody:body];
+    [self addChild:_player];
+    
+    cpBody * targetPointBody = cpBodyNew(INFINITY, INFINITY);
+    targetPointBody->p = ccp(x,y);
+    cpSpaceAddBody(space, targetPointBody);
+    
+    
+    cpShape * shp = cpBoxShapeNew(targetPointBody, boxSize, boxSize);
+    shp->e = 1.0;
+    shp->u = 1.0;
+    cpSpaceAddShape(space, shp);
+    
+    [self setTargetPointBody:targetPointBody];
+   
+    cpPivotJoint * joint = cpPivotJointAlloc();
+    cpPivotJointInit(joint, targetPointBody, body, cpvzero, cpvzero);
+    
+    cpConstraintSetMaxBias(&joint->constraint, 200.0f);
+    cpConstraintSetMaxForce(&joint->constraint, 5000.0f);
+    
+    cpSpaceAddConstraint(space, &joint->constraint);
+}
+
+- (void) createTerrainGeometry {
+    
+}
+
 
 -(void)registerWithTouchDispatcher
 {
@@ -88,7 +181,12 @@
 
 -(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
 {
+    [self setIsTouching: YES];
 	return YES;
+}
+-(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
+    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
+    self->_lastTouchPoint = touchLocation;
 }
 
 -(void)setPlayerPosition:(CGPoint)position {
@@ -108,39 +206,7 @@
 
 -(void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    CGPoint touchLocation = [touch locationInView:touch.view];
-    touchLocation = [[CCDirector sharedDirector] convertToGL:touchLocation];
-    touchLocation = [self convertToNodeSpace:touchLocation];
-    
-    CGPoint playerPos = _player.position;
-    CGPoint diff = ccpSub(touchLocation, playerPos);
-    
-    if ( abs(diff.x) > abs(diff.y) ) {
-        if (diff.x > 0) {
-            playerPos.x += _tileMap.tileSize.width;
-        } else {
-            playerPos.x -= _tileMap.tileSize.width;
-        }
-    } else {
-        if (diff.y > 0) {
-            playerPos.y += _tileMap.tileSize.height;
-        } else {
-            playerPos.y -= _tileMap.tileSize.height;
-        }
-    }
-    
-    CCLOG(@"playerPos %@",CGPointCreateDictionaryRepresentation(playerPos));
-    
-    // safety check on the bounds of the map
-    if (playerPos.x <= (_tileMap.mapSize.width * _tileMap.tileSize.width) &&
-        playerPos.y <= (_tileMap.mapSize.height * _tileMap.tileSize.height) &&
-        playerPos.y >= 0 &&
-        playerPos.x >= 0 )
-    {
-        [self setPlayerPosition:playerPos];
-    }
-    
-    [self setViewPointCenter:_player.position];
+    [self setIsTouching: NO];
 }
 
 - (void)setViewPointCenter:(CGPoint) position {
