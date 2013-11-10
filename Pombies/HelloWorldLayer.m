@@ -12,6 +12,7 @@
 @interface HelloWorldLayer() {
     CGPoint _lastTouchPoint;
     ChipmunkSpace * space;
+    NSTimeInterval      mLastTapTime;
 }
 
 @property (strong) CCTMXTiledMap *tileMap;
@@ -83,6 +84,7 @@
         self.meta = [_tileMap layerNamed:@"Meta"];
         _meta.visible = NO;
         
+        mLastTapTime = [NSDate timeIntervalSinceReferenceDate];
        
         /** Init Player And Center Camera **/
         CCTMXObjectGroup *objects = [_tileMap objectGroupNamed:@"Objects"];
@@ -91,6 +93,14 @@
         NSAssert(spawnPoint != nil, @"SpawnPoint object not found");
         int x = [[spawnPoint valueForKey:@"x"] intValue];
         int y = [[spawnPoint valueForKey:@"y"] intValue];
+        
+        [space addCollisionHandler:self
+                             typeA:@"player" typeB:@"monster"
+                             begin:@selector(beginCollision:space:)
+                          preSolve:nil
+                         postSolve:@selector(postSolveCollision:space:)
+                          separate:@selector(separateCollision:space:)
+         ];
        
         
         _meta = [_tileMap layerNamed:@"Meta"];
@@ -101,6 +111,8 @@
         self.touchEnabled = YES;
         
         [self setMonster:[[PMonster alloc] initWithLayer: self]];
+        
+        
         
         [[self monster] setPosition:ccp(x,y + 32)];
         
@@ -114,6 +126,23 @@
         
     }
     return self;
+}
+
+
+- (bool)beginCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
+    CHIPMUNK_ARBITER_GET_SHAPES(arbiter, buttonShape, border);
+    NSLog(@"First object in the collision is %@ second object is %@.", buttonShape.data, border.data);
+    return TRUE;
+}
+
+// The post-solve collision callback is called right after Chipmunk has finished calculating all of the
+// collision responses. You can use it to find out how hard objects hit each other.
+// There is also a pre-solve callback that allows you to reject collisions conditionally.
+- (void)postSolveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
+}
+
+- (void)separateCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
+    CHIPMUNK_ARBITER_GET_SHAPES(arbiter, buttonShape, border);
 }
 
 // Add new method
@@ -132,8 +161,9 @@
     
     ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
     playerShape.friction = 0.1;
+    playerShape.collisionType = @"player";
     
-    _player = [CCPhysicsSprite spriteWithFile:@"Player.png"];
+    _player = [CCPhysicsSprite spriteWithFile:@"peron1"];
     
     [self setPlayer:_player];
     [self.player setChipmunkBody:playerBody];
@@ -215,6 +245,19 @@
     [self setIsTouching: YES];
     CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
     self->_lastTouchPoint = touchLocation;
+    [[self monster] moveToward:_lastTouchPoint];
+    
+    NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
+    NSTimeInterval diff = currentTime - mLastTapTime;
+    
+    if(diff < 0.3 )
+    {
+        NSLog(@"double tap");
+    }
+    mLastTapTime = [NSDate timeIntervalSinceReferenceDate];
+    
+    
+    
 	return YES;
     
 //    return YES;
@@ -222,6 +265,7 @@
 -(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
     CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
     self->_lastTouchPoint = touchLocation;
+    [[self monster] moveToward:ccp(_lastTouchPoint.x + 64, _lastTouchPoint.y + 64)];
 }
 
 
@@ -242,7 +286,7 @@
 
 -(void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    [[self monster] moveToward:_lastTouchPoint];
+    [[self monster] moveToward:ccp(_lastTouchPoint.x + 64, _lastTouchPoint.y + 64)];
     [self setIsTouching: NO];
 }
 

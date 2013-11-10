@@ -152,6 +152,9 @@
 		094EAE99182F41FC0092C760 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 094EAE98182F41FC0092C760 /* ImageIO.framework */; };
 		094EAEC9182F46730092C760 /* libChipmunkPro-iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 094EAEC7182F46730092C760 /* libChipmunkPro-iPhone.a */; };
 		094EAEE7182FE3CF0092C760 /* PMonster.m in Sources */ = {isa = PBXBuildFile; fileRef = 094EAEE6182FE3CF0092C760 /* PMonster.m */; };
+		094EAEEA18301F5C0092C760 /* peron2 in Resources */ = {isa = PBXBuildFile; fileRef = 094EAEE818301F5C0092C760 /* peron2 */; };
+		094EAEEB18301F5C0092C760 /* peron1 in Resources */ = {isa = PBXBuildFile; fileRef = 094EAEE918301F5C0092C760 /* peron1 */; };
+		094EAEED183026490092C760 /* gorilazombie.png in Resources */ = {isa = PBXBuildFile; fileRef = 094EAEEC183026490092C760 /* gorilazombie.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -489,6 +492,9 @@
 		094EAEE4182F479D0092C760 /* cpVect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpVect.h; sourceTree = "<group>"; };
 		094EAEE5182FE3CF0092C760 /* PMonster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMonster.h; sourceTree = "<group>"; };
 		094EAEE6182FE3CF0092C760 /* PMonster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMonster.m; sourceTree = "<group>"; };
+		094EAEE818301F5C0092C760 /* peron2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = peron2; path = Resources/Custom/peron2; sourceTree = "<group>"; };
+		094EAEE918301F5C0092C760 /* peron1 */ = {isa = PBXFileReference; lastKnownFileType = file; name = peron1; path = Resources/Custom/peron1; sourceTree = "<group>"; };
+		094EAEEC183026490092C760 /* gorilazombie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gorilazombie.png; path = Resources/Custom/gorilazombie.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -953,6 +959,9 @@
 		0936C63B182EC9E5008C37BE /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				094EAEEC183026490092C760 /* gorilazombie.png */,
+				094EAEE818301F5C0092C760 /* peron2 */,
+				094EAEE918301F5C0092C760 /* peron1 */,
 				0936C63E182EDB4B008C37BE /* pv.tmx */,
 				0936C62D182EC9DB008C37BE /* move.caf */,
 				0936C62E182EC9DB008C37BE /* TileMap.caf */,
@@ -1087,9 +1096,12 @@
 				0936C5FF182EC8B0008C37BE /* ChangeLog in Resources */,
 				0936C639182EC9DC008C37BE /* Player.png in Resources */,
 				0936C493182EC8AE008C37BE /* Default@2x.png in Resources */,
+				094EAEED183026490092C760 /* gorilazombie.png in Resources */,
+				094EAEEA18301F5C0092C760 /* peron2 in Resources */,
 				0936C49D182EC8AE008C37BE /* Icon-Small.png in Resources */,
 				0936C637182EC9DC008C37BE /* hit.caf in Resources */,
 				0936C499182EC8AE008C37BE /* Icon-72.png in Resources */,
+				094EAEEB18301F5C0092C760 /* peron1 in Resources */,
 				0936C491182EC8AE008C37BE /* Default.png in Resources */,
 				0936C49B182EC8AE008C37BE /* Icon-Small-50.png in Resources */,
 				0936C4A6182EC8AE008C37BE /* iTunesArtwork in Resources */,

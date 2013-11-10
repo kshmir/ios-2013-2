@@ -31,6 +31,8 @@
 @implementation PMonster {
     HelloWorldLayer * _layer;
     ChipmunkBody * _leaderPoint;
+    BOOL hasMoved;
+    float lastAng;
 }
 
 // Add after @implementation CatSprite
@@ -63,11 +65,49 @@
 - (int)costToMoveFromStep:(ShortestPathStep *)fromStep toAdjacentStep:(ShortestPathStep *)toStep {
     // Because we can't move diagonally and because terrain is just walkable or unwalkable the cost is always the same.
 	// But it have to be different if we can move diagonally and/or if there is swamps, hills, etc...
+    
 	return 1;
 }
 
+const float half = 1.57079633;
+
+- (void) draw {
+    float ang = [[self chipmunkBody] angle];
+    float currentAng = 0;
+    
+    CGPoint toCoord = _leaderPoint.pos;
+    CGPoint fromCoord = self.position;
+    
+   	double dist = sqrt(pow(abs(toCoord.x - fromCoord.x), 2) + pow(abs(toCoord.y - fromCoord.y), 2));
+   
+    if (dist > 32 && currentMovingPath != nil && toCoord.x != 0 && toCoord.y != 0) {
+        if (self.position.y - _leaderPoint.pos.y != 0) {
+            currentAng = atanf((self.position.x - _leaderPoint.pos.x)
+                               / (self.position.y - _leaderPoint.pos.y));
+        }
+        
+        ;
+        [self setFlipX:(self.position.x < _leaderPoint.pos.x)];
+        [self setFlipY:(self.position.y < _leaderPoint.pos.y)];
+        
+        
+        if (!hasMoved) {
+            lastAng = currentAng;
+            hasMoved = YES;
+        } else {
+            float angDiff = lastAng - currentAng;
+            lastAng = currentAng;
+            [[self chipmunkBody] setAngle:(ang + angDiff)];
+        }
+        
+    }
+    
+    NSLog(@"angle: %f", [[self chipmunkBody] angle]);
+    [super draw];
+}
+
 - (id)initWithLayer:(HelloWorldLayer *)layer {
-    if ((self = [super initWithFile:@"Player.png"])) {
+    if ((self = [super initWithFile:@"gorilazombie.png"])) {
         _layer = layer;
         
         self.spOpenSteps = nil;
@@ -80,6 +120,8 @@
         ChipmunkBody *monsterBody = [[layer space] add:[ChipmunkBody bodyWithMass:playerMass andMoment:INFINITY]];
         
         ChipmunkShape *monsterShape = [[layer space] add:[ChipmunkCircleShape circleWithBody:monsterBody radius:playerRadius offset:cpvzero]];
+       
+        monsterShape.collisionType = @"monster";
         
         
         [self setChipmunkBody:monsterBody];
