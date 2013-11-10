@@ -80,6 +80,9 @@ const float half = 1.57079633;
     
    	double dist = sqrt(pow(abs(toCoord.x - fromCoord.x), 2) + pow(abs(toCoord.y - fromCoord.y), 2));
    
+    [self setFlipX:(self.position.x > _leaderPoint.pos.x)];
+    [self setFlipY:(self.position.y > _leaderPoint.pos.y)];
+   
     if (dist > 32 && currentMovingPath != nil && toCoord.x != 0 && toCoord.y != 0) {
         if (self.position.y - _leaderPoint.pos.y != 0) {
             currentAng = atanf((self.position.x - _leaderPoint.pos.x)
@@ -87,8 +90,6 @@ const float half = 1.57079633;
         }
         
         ;
-        [self setFlipX:(self.position.x < _leaderPoint.pos.x)];
-        [self setFlipY:(self.position.y < _leaderPoint.pos.y)];
         
         
         if (!hasMoved) {
@@ -102,7 +103,6 @@ const float half = 1.57079633;
         
     }
     
-    NSLog(@"angle: %f", [[self chipmunkBody] angle]);
     [super draw];
 }
 
