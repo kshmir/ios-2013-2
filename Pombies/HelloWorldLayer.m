@@ -13,6 +13,7 @@
 @property (strong) CCTMXTiledMap *tileMap;
 @property (strong) CCTMXLayer *background;
 @property (strong) CCSprite *player;
+@property (strong) CCTMXLayer *meta;
 
 @end
 
@@ -42,6 +43,10 @@
         
         [self addChild:_tileMap z:-1];
         
+        
+        self.meta = [_tileMap layerNamed:@"Meta"];
+        _meta.visible = NO;
+        
        
         /** Init Player And Center Camera **/
         // Inside the init method, after setting self.background
@@ -66,6 +71,13 @@
     return self;
 }
 
+// Add new method
+- (CGPoint)tileCoordForPosition:(CGPoint)position {
+    int x = position.x / _tileMap.tileSize.width;
+    int y = ((_tileMap.mapSize.height * _tileMap.tileSize.height) - position.y) / _tileMap.tileSize.height;
+    return ccp(x, y);
+}
+
 
 -(void)registerWithTouchDispatcher
 {
@@ -80,7 +92,18 @@
 }
 
 -(void)setPlayerPosition:(CGPoint)position {
-	_player.position = position;
+    CGPoint tileCoord = [self tileCoordForPosition:position];
+    int tileGid = [_meta tileGIDAt:tileCoord];
+    if (tileGid) {
+        NSDictionary *properties = [_tileMap propertiesForGID:tileGid];
+        if (properties) {
+            NSString *collision = properties[@"Collidable"];
+            if (collision && [collision isEqualToString:@"True"]) {
+                return;
+            }
+        }
+    }
+    _player.position = position;
 }
 
 -(void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event

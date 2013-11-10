@@ -3,6 +3,9 @@
  <tileset firstgid="1" name="tmw_desert_spacing" tilewidth="32" tileheight="32" spacing="1" margin="1">
   <image source="tmw_desert_spacing.png" width="265" height="199"/>
  </tileset>
+ <tileset firstgid="49" name="Meta" tilewidth="32" tileheight="32" spacing="1" margin="1">
+  <image source="meta_tiles.png" width="67" height="34"/>
+ </tileset>
  <layer name="Solidos" width="50" height="50">
   <data encoding="base64" compression="zlib">
    eJztl8tuwjAQRZ12RVnx2lQBCUE3Ffz/7zGIWB1dcPxIUq5hFkfiIZM5vqOxOTrnfivnRzgIjfBRKZ/CvvOYCWthWRkbYQ4e1/e7yvB1l3g0XZZT1Zbz+0M8ps6upBbzeC8PnOcpfc/ooef5JnEdq8c8cx2rR+tuPbX9Jw//POxl7PFYPXr+4z1h5eLnQ0kt2uML0P0Q+q6kl2L7XVLLVB5tt4dYc5OQJ4vHwv3NpuvrFdS4hs9YPTCTnCzYPHQmOVmM4YH/P/zzFu7+zq/nSWj26ExiWeg5tM2sZcj5ofcD+wczaVVtj7Lwjjl54+wbwyPmgnsac3imR59LiJDDsz1yXPocGDxSXGIOLB59LikOTB6hWoasfTcPvCuHSOmLoR45tWgPPCfH4NF5MdVzvEdKhsyYBxfmwYV5cGEeXJgHF+bBhXlwYR5cmAcXr+RxEr4r5yxcALYp9cg=
@@ -16,6 +19,11 @@
  <layer name="Mapa" width="50" height="50">
   <data encoding="base64" compression="zlib">
    eJztl31LwzAQh1MF3wbTuU1ldIKoIKJj3//TecUEjzMvl7SpF7w/Htgyuv6e3HFpX4wx743zCjwDHXDSKKfAk/W4BDbAbWNsgQXxGL4/NobLXeLR2VrWypbz/2M8ateuJIt6/C8POs85fS/RA8/zLfM6qR6LzOukevTmu6f2M3m4+9Fepj2eyoPnP31OWJv0+VCSBXtcEXA/hH4r6aXUfpdkqeXR2z2kmTtGPaV4rMzPbBo+r0nGDVmT6kFrklMLaR64Jjm1mMKDvn+4+63M72d+PE9CswfXJFULPIf2mVl858cZcB7hwrMntH9oTXqUzVcL50j3mJvF57EEriPcBGobc6F7mnJwHtwsU3rEXEKEHP7aI8cl5iDBg+OScpDiEXPhOEjyCJ0xOdeO8bgD7iM8zOjBzZJ6bg/B6YuxHjlZsAc9J6fAd17Uuo/z4M58Lm8W7vpY1EM9WvY4NOpxtHDX1aOux9yohyzUQxbqIQv1kIV6yEI9ZDF4fAC7xvkEvgA+2+7A
+  </data>
+ </layer>
+ <layer name="Meta" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztmMsVwCAIBG3J9F9cGjCRRcHFt4e5yWcgekhvrXUhAnmKseIR7ezpRR7yqOjhqSGPeA8kjtkjex+jmqizJdYSj/SS5YHMm81jdLbiPqp7fPXriZWHLxbtx/N+ou+s982OPrc6K2R2s7MruTI9rDl25Yn0sOTJ/sa9PfzlOnFXV/pA74M87vXYzam61T0sO0SYeWTVk4c8Knj05Hrax50e2ciDC3lwIQ8u5MGFPLiQBxen/0Ps5AVxCOTN
   </data>
  </layer>
  <objectgroup name="Objects" width="50" height="50">
