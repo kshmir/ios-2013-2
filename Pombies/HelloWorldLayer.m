@@ -97,8 +97,8 @@
     if (tileGid) {
         NSDictionary *properties = [_tileMap propertiesForGID:tileGid];
         if (properties) {
-            NSString *collision = properties[@"Collidable"];
-            if (collision && [collision isEqualToString:@"True"]) {
+            NSString *collision = properties[@"collidable"];
+            if (collision && [collision isEqualToString:@"true"]) {
                 return;
             }
         }
