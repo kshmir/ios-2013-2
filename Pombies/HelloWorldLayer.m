@@ -170,11 +170,10 @@
     
     ChipmunkPolylineSet * polylines = [sampler march:sampleRect xSamples:tileCountH + 2 ySamples:tileCountH + 2 hard:TRUE];
     
-    cpFloat tileW = _tileMap.tileSize.width;
     cpFloat tileH = _tileMap.tileSize.height;
     
     for(ChipmunkPolyline * line in polylines){
-        ChipmunkPolyline * simplified = [line simplifyCurves:0.0f];
+        ChipmunkPolyline * simplified = [line simplifyCurves:1.0f];
         for(int i=0; i<simplified.count-1; i++){
             
             // The sampler coordinates were in tile coordinates.
@@ -202,6 +201,8 @@
 -(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
 {
     [self setIsTouching: YES];
+    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
+    self->_lastTouchPoint = touchLocation;
 	return YES;
 }
 -(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
