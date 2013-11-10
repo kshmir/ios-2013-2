@@ -65,7 +65,6 @@
 // Add new method
 - (void)update:(ccTime)dt {
     if (self.isTouching) {
-        CGPoint touchLocation = [self convertToNodeSpace: [[CCDirector sharedDirector] convertToGL: self->_lastTouchPoint]];
         [self targetPointBody]->p = self->_lastTouchPoint;
     }
     
@@ -149,12 +148,6 @@
     cpBody * targetPointBody = cpBodyNew(INFINITY, INFINITY);
     targetPointBody->p = ccp(x,y);
     cpSpaceAddBody(space, targetPointBody);
-    
-    
-    cpShape * shp = cpBoxShapeNew(targetPointBody, boxSize, boxSize);
-    shp->e = 1.0;
-    shp->u = 1.0;
-    cpSpaceAddShape(space, shp);
     
     [self setTargetPointBody:targetPointBody];
    
