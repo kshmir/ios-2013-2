@@ -10,13 +10,14 @@
 
 @interface HelloWorldLayer() {
     CGPoint _lastTouchPoint;
+    ChipmunkSpace * space;
 }
 
 @property (strong) CCTMXTiledMap *tileMap;
 @property (strong) CCTMXLayer *background;
 @property (strong) CCPhysicsSprite *player;
 @property (strong) CCTMXLayer *meta;
-@property (atomic) cpBody *targetPointBody;
+@property (strong) ChipmunkBody *targetPointBody;
 @property (atomic) BOOL *isTouching;
 
 @end
@@ -41,35 +42,18 @@
 }
 
 - (void)createSpace {
-    space = cpSpaceNew();
-    space->gravity = ccp(0, -1);
+    space = [[ChipmunkSpace alloc] init];
 }
 
-// Add new method
-- (void)createBoxAtLocation:(CGPoint)location {
-    
-    float boxSize = 120.0;
-    float mass = 100.0;
-    cpBody *body = cpBodyNew(mass, cpMomentForBox(mass, boxSize, boxSize));
-    body->p = location;
-    cpSpaceAddBody(space, body);
-    
-    cpShape *shape = cpBoxShapeNew(body, boxSize, boxSize);
-    shape->e = 100.0;
-    shape->u = 100.0;
-    cpSpaceAddShape(space, shape);
-    
-    [self.player setCPBody:body];
-}
 
 // Add new method
 - (void)update:(ccTime)dt {
     if (self.isTouching) {
-        [self targetPointBody]->p = self->_lastTouchPoint;
+        [[self targetPointBody] setPos:self->_lastTouchPoint];
     }
     
     ccTime fixed_dt = [CCDirector sharedDirector].animationInterval;
-    cpSpaceStep(space, fixed_dt);
+    [space step:fixed_dt];
     
     //update camera
     [self setViewPointCenter:_player.position];
@@ -113,7 +97,7 @@
         [self createTerrainGeometry];
         [self setViewPointCenter:_player.position];
         
-        CCPhysicsDebugNode *debugNode = [CCPhysicsDebugNode debugNodeForCPSpace:space];
+        CCPhysicsDebugNode *debugNode = [CCPhysicsDebugNode debugNodeForChipmunkSpace:space];
         [self addChild:debugNode];
         
     }
@@ -128,39 +112,82 @@
 }
 
 - (void) createPlayer: (int) y x: (int) x {
-    float boxSize = 20.0f;
-    float mass = 1.0;
-    cpBody *body = cpBodyNew(mass, cpMomentForBox(mass, boxSize, boxSize * 2));
-    body->p = ccp(x,y);
-    cpSpaceAddBody(space, body);
+    float playerMass = 1.0f;
+    float playerRadius = 13.0f;
+
+    ChipmunkBody *playerBody = [space add:[ChipmunkBody bodyWithMass:playerMass andMoment:INFINITY]];
+    playerBody.pos = ccp(x,y);
     
-    cpShape *shape = cpBoxShapeNew(body, boxSize, boxSize * 2);
-    shape->e = 1.0;
-    shape->u = 1.0;
-    cpSpaceAddShape(space, shape);
+    ChipmunkShape *playerShape = [space add:[ChipmunkCircleShape circleWithBody:playerBody radius:playerRadius offset:cpvzero]];
+    playerShape.friction = 0.1;
     
     _player = [CCPhysicsSprite spriteWithFile:@"Player.png"];
     
     [self setPlayer:_player];
-    [self.player setCPBody:body];
+    [self.player setChipmunkBody:playerBody];
     [self addChild:_player];
     
-    cpBody * targetPointBody = cpBodyNew(INFINITY, INFINITY);
-    targetPointBody->p = ccp(x,y);
-    cpSpaceAddBody(space, targetPointBody);
+    ChipmunkBody *targetPointBody = [space add:[ChipmunkBody bodyWithMass:INFINITY andMoment:INFINITY]];
+    targetPointBody.pos = ccp(x,y);
     
     [self setTargetPointBody:targetPointBody];
    
-    cpPivotJoint * joint = cpPivotJointAlloc();
-    cpPivotJointInit(joint, targetPointBody, body, cpvzero, cpvzero);
     
-    cpConstraintSetMaxBias(&joint->constraint, 200.0f);
-    cpConstraintSetMaxForce(&joint->constraint, 5000.0f);
-    
-    cpSpaceAddConstraint(space, &joint->constraint);
+    ChipmunkPivotJoint* joint = [space add:[ChipmunkPivotJoint pivotJointWithBodyA:targetPointBody
+                                                                             bodyB:playerBody
+                                                                            anchr1:cpvzero
+                                                                            anchr2:cpvzero]];
+    joint.maxBias = 200.0f;
+    joint.maxForce = 3000.0f;
 }
 
 - (void) createTerrainGeometry {
+    int tileCountW = _meta.layerSize.width;
+    int tileCountH = _meta.layerSize.height;
+    
+    cpBB sampleRect = cpBBNew(-0.5, -0.5, tileCountW + 0.5, tileCountH + 0.5);
+    
+    // Create a sampler using a block that samples the tilemap in tile coordinates.
+    ChipmunkBlockSampler *sampler = [[ChipmunkBlockSampler alloc] initWithBlock:^(cpVect point){
+        // Clamp the point so that samples outside the tilemap bounds will sample the edges.
+        point = cpBBClampVect(cpBBNew(0.5, 0.5, tileCountW - 0.5, tileCountH - 0.5), point);
+        // The samples will always be at tile centers.
+        // So we just need to truncate to an integer to convert to tile coordinates.
+        int x = point.x;
+        int y = point.y;
+        
+        // Flip the y-coord (Cocos2D tilemap coords are flipped this way)
+        y = tileCountH - 1 - y;
+        
+        // Look up the tile to see if we set a Collidable property in the Tileset meta layer
+        NSDictionary *properties = [_tileMap propertiesForGID:[_meta tileGIDAt:ccp(x, y)]];
+        BOOL collidable = [[properties valueForKey:@"collidable"] isEqualToString:@"true"];
+        
+        // If the tile is collidable, return a density of 1.0 (meaning solid)
+        // Otherwise return a density of 0.0 meaning completely open.
+        return (collidable ? 1.0f : 0.0f);
+    }];
+    
+    ChipmunkPolylineSet * polylines = [sampler march:sampleRect xSamples:tileCountH + 2 ySamples:tileCountH + 2 hard:TRUE];
+    
+    cpFloat tileW = _tileMap.tileSize.width;
+    cpFloat tileH = _tileMap.tileSize.height;
+    
+    for(ChipmunkPolyline * line in polylines){
+        ChipmunkPolyline * simplified = [line simplifyCurves:0.0f];
+        for(int i=0; i<simplified.count-1; i++){
+            
+            // The sampler coordinates were in tile coordinates.
+            // Convert them to pixel coordinates by multiplying by the tile size.
+            cpFloat tileSize = tileH; // fortunately our tiles are square, otherwise we'd need to multiply components independently
+            cpVect a = cpvmult(simplified.verts[  i], tileSize);
+            cpVect b = cpvmult(simplified.verts[i+1], tileSize);
+            
+            // Add the shape and set some properties.
+            ChipmunkShape *seg = [space add:[ChipmunkSegmentShape segmentWithBody:space.staticBody from:a to:b radius:1.0f]];
+            seg.friction = 1.0;
+        }
+    }
     
 }
 

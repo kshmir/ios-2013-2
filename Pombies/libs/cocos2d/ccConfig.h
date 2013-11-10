@@ -45,7 +45,7 @@
  @since v2.1
  */
 #if CC_ENABLE_CHIPMUNK_INTEGRATION && !defined(CC_CHIPMUNK_IMPORT)
-#define CC_CHIPMUNK_IMPORT "chipmunk.h"
+#define CC_CHIPMUNK_IMPORT "ObjectiveChipmunk.h"
 #endif
 
 /** @def CC_ENABLE_BOX2D_INTEGRATION
