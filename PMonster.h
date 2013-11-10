@@ -14,10 +14,12 @@
 @private
 	NSMutableArray *spOpenSteps;
 	NSMutableArray *spClosedSteps;
+    
 }
 
 @property (nonatomic, retain) NSMutableArray *spOpenSteps;
 @property (nonatomic, retain) NSMutableArray *spClosedSteps;
+@property (nonatomic, retain) NSMutableArray *shortestPath;
 
 - (id)initWithLayer:(HelloWorldLayer *)layer;
 - (void)moveToward:(CGPoint)target;

@@ -35,6 +35,7 @@
 // Add after @implementation CatSprite
 @synthesize spOpenSteps;
 @synthesize spClosedSteps;
+@synthesize shortestPath;
 
 - (void)insertInOpenSteps:(ShortestPathStep *)step {
     int stepFScore = [step fScore]; // Compute the step's F score
@@ -109,6 +110,7 @@
         // If the currentStep is the desired tile coordinate, we are done!
         if (CGPointEqualToPoint(currentStep.position, toTileCoord)) {
             
+            [self constructPathAndStartAnimationFromStep:currentStep];
             pathFound = YES;
             ShortestPathStep *tmpStep = currentStep;
             NSLog(@"PATH FOUND :");
@@ -171,6 +173,47 @@
         }
         
     } while ([self.spOpenSteps count] > 0);
+}
+
+- (void)popStepAndAnimate
+{
+	// Check if there remains path steps to go through
+	if ([self.shortestPath count] == 0) {
+		self.shortestPath = nil;
+		return;
+	}
+    
+	// Get the next step to move to
+	ShortestPathStep *s = [self.shortestPath objectAtIndex:0];
+    
+	// Prepare the action and the callback
+	id moveAction = [CCMoveTo actionWithDuration:0.4 position:[_layer positionForTileCoord:s.position]];
+	id moveCallback = [CCCallFunc actionWithTarget:self selector:@selector(popStepAndAnimate)]; // set the method itself as the callback
+    
+	// Remove the step
+	[self.shortestPath removeObjectAtIndex:0];
+    
+	// Play actions
+	[self runAction:[CCSequence actions:moveAction, moveCallback, nil]];
+}
+
+- (void)constructPathAndStartAnimationFromStep:(ShortestPathStep *)step
+{
+    
+    [self popStepAndAnimate];
+    
+	self.shortestPath = [NSMutableArray array];
+    
+	do {
+		if (step.parent != nil) { // Don't add the last step which is the start position (remember we go backward, so the last one is the origin position ;-)
+			[self.shortestPath insertObject:step atIndex:0]; // Always insert at index 0 to reverse the path
+		}
+		step = step.parent; // Go backward
+	} while (step != nil); // Until there is no more parents
+    
+    for (ShortestPathStep *s in self.shortestPath) {
+        NSLog(@"%@", s);
+    }
 }
 
 @end

@@ -98,8 +98,9 @@
         
         [self setMonster:[[PMonster alloc] initWithLayer: self]];
         
-        [[self monster] setPosition:ccp(x,y)];
+        [[self monster] setPosition:ccp(x,y + 32)];
         
+        [self addChild:[self monster]];
         [self createPlayer:y x:x];
         [self createTerrainGeometry];
         [self setViewPointCenter:_player.position];
