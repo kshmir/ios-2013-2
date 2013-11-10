@@ -25,5 +25,6 @@
 - (CGPoint)positionForTileCoord:(CGPoint)tileCoord;
 - (BOOL)isWallAtTileCoord:(CGPoint)tileCoord;
 - (CGPoint)tileCoordForPosition:(CGPoint)position;
+- (NSArray *)walkableAdjacentTilesCoordForTileCoord:(CGPoint)tileCoord;
 
 @end

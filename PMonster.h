@@ -21,4 +21,5 @@
 
 - (id)initWithLayer:(HelloWorldLayer *)layer;
 - (void)moveToward:(CGPoint)target;
+
 @end

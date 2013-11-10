@@ -87,6 +87,7 @@
         NSAssert(spawnPoint != nil, @"SpawnPoint object not found");
         int x = [[spawnPoint valueForKey:@"x"] intValue];
         int y = [[spawnPoint valueForKey:@"y"] intValue];
+       
         
         _meta = [_tileMap layerNamed:@"Meta"];
         _meta.visible = NO;
@@ -95,7 +96,9 @@
         
         self.touchEnabled = YES;
         
-        [self setMonster:[[PMonster  alloc] initWithLayer: self]];
+        [self setMonster:[[PMonster alloc] initWithLayer: self]];
+        
+        [[self monster] setPosition:ccp(x,y)];
         
         [self createPlayer:y x:x];
         [self createTerrainGeometry];
@@ -254,6 +257,7 @@
     self.position = viewPoint;
 }
 
+
 - (BOOL)isValidTileCoord:(CGPoint)tileCoord {
     if (tileCoord.x < 0 || tileCoord.y < 0 ||
         tileCoord.x >= _tileMap.mapSize.width ||
@@ -284,5 +288,35 @@
 }
 
 
+- (NSArray *)walkableAdjacentTilesCoordForTileCoord:(CGPoint)tileCoord
+{
+	NSMutableArray *tmp = [NSMutableArray arrayWithCapacity:4];
+    
+	// Top
+	CGPoint p = CGPointMake(tileCoord.x, tileCoord.y - 1);
+	if ([self isValidTileCoord:p] && ![self isWallAtTileCoord:p]) {
+		[tmp addObject:[NSValue valueWithCGPoint:p]];
+	}
+    
+	// Left
+	p = CGPointMake(tileCoord.x - 1, tileCoord.y);
+	if ([self isValidTileCoord:p] && ![self isWallAtTileCoord:p]) {
+		[tmp addObject:[NSValue valueWithCGPoint:p]];
+	}
+    
+	// Bottom
+	p = CGPointMake(tileCoord.x, tileCoord.y + 1);
+	if ([self isValidTileCoord:p] && ![self isWallAtTileCoord:p]) {
+		[tmp addObject:[NSValue valueWithCGPoint:p]];
+	}
+    
+	// Right
+	p = CGPointMake(tileCoord.x + 1, tileCoord.y);
+	if ([self isValidTileCoord:p] && ![self isWallAtTileCoord:p]) {
+		[tmp addObject:[NSValue valueWithCGPoint:p]];
+	}
+    
+	return [NSArray arrayWithArray:tmp];
+}
 
 @end
