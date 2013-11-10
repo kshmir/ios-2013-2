@@ -7,6 +7,7 @@
 //
 #import "HelloWorldLayer.h"
 #import "AppDelegate.h"
+#import "PMonster.h"
 
 @interface HelloWorldLayer() {
     CGPoint _lastTouchPoint;
@@ -18,6 +19,7 @@
 @property (strong) CCPhysicsSprite *player;
 @property (strong) CCTMXLayer *meta;
 @property (strong) ChipmunkBody *targetPointBody;
+@property (strong) PMonster *monster;
 @property (atomic) BOOL *isTouching;
 
 @end
@@ -92,6 +94,8 @@
         [self scheduleUpdate];
         
         self.touchEnabled = YES;
+        
+        [self setMonster:[[PMonster  alloc] initWithLayer: self]];
         
         [self createPlayer:y x:x];
         [self createTerrainGeometry];
@@ -200,15 +204,20 @@
 
 -(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    [self setIsTouching: YES];
-    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
-    self->_lastTouchPoint = touchLocation;
-	return YES;
+//    [self setIsTouching: YES];
+//    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
+//    self->_lastTouchPoint = touchLocation;
+//	return YES;
+    
+    CGPoint touchLocation = [_tileMap convertTouchToNodeSpace:touch];
+    [[self monster] moveToward:touchLocation];
+    return YES;
 }
 -(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
-    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
-    self->_lastTouchPoint = touchLocation;
+//    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
+//    self->_lastTouchPoint = touchLocation;
 }
+
 
 -(void)setPlayerPosition:(CGPoint)position {
     CGPoint tileCoord = [self tileCoordForPosition:position];
@@ -244,5 +253,36 @@
     CGPoint viewPoint = ccpSub(centerOfView, actualPosition);
     self.position = viewPoint;
 }
+
+- (BOOL)isValidTileCoord:(CGPoint)tileCoord {
+    if (tileCoord.x < 0 || tileCoord.y < 0 ||
+        tileCoord.x >= _tileMap.mapSize.width ||
+        tileCoord.y >= _tileMap.mapSize.height) {
+        return FALSE;
+    } else {
+        return TRUE;
+    }
+}
+
+-(BOOL)isProp:(NSString*)prop atTileCoord:(CGPoint)tileCoord forLayer:(CCTMXLayer *)layer {
+    if (![self isValidTileCoord:tileCoord]) return NO;
+    int gid = [layer tileGIDAt:tileCoord];
+    NSDictionary * properties = [_tileMap propertiesForGID:gid];
+    if (properties == nil) return NO;
+    return [properties objectForKey:prop] != nil;
+}
+
+
+- (CGPoint)positionForTileCoord:(CGPoint)tileCoord {
+    int x = (tileCoord.x * _tileMap.tileSize.width) + _tileMap.tileSize.width/2;
+    int y = (_tileMap.mapSize.height * _tileMap.tileSize.height) - (tileCoord.y * _tileMap.tileSize.height) - _tileMap.tileSize.height/2;
+    return ccp(x, y);
+}
+
+-(BOOL)isWallAtTileCoord:(CGPoint)tileCoord {
+    return [self isProp:@"collidable" atTileCoord:tileCoord forLayer:_meta];
+}
+
+
 
 @end

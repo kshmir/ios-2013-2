@@ -20,4 +20,10 @@
 // returns a CCScene that contains the HelloWorldLayer as the only child
 +(CCScene *) scene;
 
+
+- (BOOL)isValidTileCoord:(CGPoint)tileCoord;
+- (CGPoint)positionForTileCoord:(CGPoint)tileCoord;
+- (BOOL)isWallAtTileCoord:(CGPoint)tileCoord;
+- (CGPoint)tileCoordForPosition:(CGPoint)position;
+
 @end

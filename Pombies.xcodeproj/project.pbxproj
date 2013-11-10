@@ -151,6 +151,7 @@
 		0936C63F182EDB4B008C37BE /* pv.tmx in Resources */ = {isa = PBXBuildFile; fileRef = 0936C63E182EDB4B008C37BE /* pv.tmx */; };
 		094EAE99182F41FC0092C760 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 094EAE98182F41FC0092C760 /* ImageIO.framework */; };
 		094EAEC9182F46730092C760 /* libChipmunkPro-iPhone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 094EAEC7182F46730092C760 /* libChipmunkPro-iPhone.a */; };
+		094EAEE7182FE3CF0092C760 /* PMonster.m in Sources */ = {isa = PBXBuildFile; fileRef = 094EAEE6182FE3CF0092C760 /* PMonster.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -486,6 +487,8 @@
 		094EAEE2182F479D0092C760 /* cpSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpSpace.h; sourceTree = "<group>"; };
 		094EAEE3182F479D0092C760 /* cpSpatialIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpSpatialIndex.h; sourceTree = "<group>"; };
 		094EAEE4182F479D0092C760 /* cpVect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpVect.h; sourceTree = "<group>"; };
+		094EAEE5182FE3CF0092C760 /* PMonster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMonster.h; sourceTree = "<group>"; };
+		094EAEE6182FE3CF0092C760 /* PMonster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMonster.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -514,6 +517,8 @@
 		0936C46E182EC8AE008C37BE = {
 			isa = PBXGroup;
 			children = (
+				094EAEE5182FE3CF0092C760 /* PMonster.h */,
+				094EAEE6182FE3CF0092C760 /* PMonster.m */,
 				0936C48E182EC8AE008C37BE /* Pombies */,
 				0936C479182EC8AE008C37BE /* Frameworks */,
 				0936C478182EC8AE008C37BE /* Products */,
@@ -1181,6 +1186,7 @@
 				0936C5C9182EC8B0008C37BE /* TGAlib.m in Sources */,
 				0936C4D2182EC8AF008C37BE /* CCAnimation.m in Sources */,
 				0936C5FD182EC8B0008C37BE /* aabb.c in Sources */,
+				094EAEE7182FE3CF0092C760 /* PMonster.m in Sources */,
 				0936C574182EC8B0008C37BE /* CCTMXObjectGroup.m in Sources */,
 				0936C5D6182EC8B0008C37BE /* CDAudioManager.m in Sources */,
 				0936C583182EC8B0008C37BE /* CCTransitionProgress.m in Sources */,
