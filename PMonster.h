@@ -8,9 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import "cocos2d.h"
+#import "ObjectiveChipmunk.h"
 #import "HelloWorldLayer.h"
 
-@interface PMonster : CCSprite {
+@interface PMonster : CCPhysicsSprite {
 @private
 	NSMutableArray *spOpenSteps;
 	NSMutableArray *spClosedSteps;
@@ -20,6 +21,8 @@
 @property (nonatomic, retain) NSMutableArray *spOpenSteps;
 @property (nonatomic, retain) NSMutableArray *spClosedSteps;
 @property (nonatomic, retain) NSMutableArray *shortestPath;
+@property (nonatomic, retain) NSMutableArray *currentMovingPath;
+
 
 - (id)initWithLayer:(HelloWorldLayer *)layer;
 - (void)moveToward:(CGPoint)target;

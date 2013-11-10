@@ -30,12 +30,14 @@
 
 @implementation PMonster {
     HelloWorldLayer * _layer;
+    ChipmunkBody * _leaderPoint;
 }
 
 // Add after @implementation CatSprite
 @synthesize spOpenSteps;
 @synthesize spClosedSteps;
 @synthesize shortestPath;
+@synthesize currentMovingPath;
 
 - (void)insertInOpenSteps:(ShortestPathStep *)step {
     int stepFScore = [step fScore]; // Compute the step's F score
@@ -70,6 +72,29 @@
         
         self.spOpenSteps = nil;
         self.spClosedSteps = nil;
+        
+        
+        float playerMass = 1.0f;
+        float playerRadius = 13.0f;
+        
+        ChipmunkBody *monsterBody = [[layer space] add:[ChipmunkBody bodyWithMass:playerMass andMoment:INFINITY]];
+        
+        ChipmunkShape *monsterShape = [[layer space] add:[ChipmunkCircleShape circleWithBody:monsterBody radius:playerRadius offset:cpvzero]];
+        
+        
+        [self setChipmunkBody:monsterBody];
+        
+        ChipmunkBody * leaderPoint = [[layer space] add:[ChipmunkBody bodyWithMass:INFINITY andMoment:INFINITY]];
+        
+       
+        self->_leaderPoint = leaderPoint;
+    
+        ChipmunkPivotJoint* joint = [[layer space] add:[ChipmunkPivotJoint pivotJointWithBodyA:leaderPoint
+                                                                                 bodyB:monsterBody
+                                                                                anchr1:cpvzero
+                                                                                anchr2:cpvzero]];
+        joint.maxBias = 200.0f;
+        joint.maxForce = 3000.0f;
     }
     return self;
 }
@@ -178,31 +203,25 @@
 - (void)popStepAndAnimate
 {
 	// Check if there remains path steps to go through
-	if ([self.shortestPath count] == 0) {
-		self.shortestPath = nil;
+	if ([self.currentMovingPath count] == 0) {
+		self.currentMovingPath = nil;
+        NSLog(@"out!");
 		return;
 	}
     
 	// Get the next step to move to
-	ShortestPathStep *s = [self.shortestPath objectAtIndex:0];
+	ShortestPathStep *s = [self.currentMovingPath objectAtIndex:0];
     
-	// Prepare the action and the callback
-	id moveAction = [CCMoveTo actionWithDuration:0.4 position:[_layer positionForTileCoord:s.position]];
-	id moveCallback = [CCCallFunc actionWithTarget:self selector:@selector(popStepAndAnimate)]; // set the method itself as the callback
+    [_leaderPoint setPos:[_layer positionForTileCoord:s.position]];
+   
+    [[self currentMovingPath] removeObjectAtIndex:0];
     
-	// Remove the step
-	[self.shortestPath removeObjectAtIndex:0];
-    
-	// Play actions
-	[self runAction:[CCSequence actions:moveAction, moveCallback, nil]];
+    NSLog(@"update!");
 }
 
 - (void)constructPathAndStartAnimationFromStep:(ShortestPathStep *)step
 {
-    
-    [self popStepAndAnimate];
-    
-	self.shortestPath = [NSMutableArray array];
+    self.shortestPath = [NSMutableArray array];
     
 	do {
 		if (step.parent != nil) { // Don't add the last step which is the start position (remember we go backward, so the last one is the origin position ;-)
@@ -211,9 +230,11 @@
 		step = step.parent; // Go backward
 	} while (step != nil); // Until there is no more parents
     
-    for (ShortestPathStep *s in self.shortestPath) {
-        NSLog(@"%@", s);
-    }
+    [self setCurrentMovingPath: [[NSMutableArray alloc] initWithArray:[self.shortestPath copy]]];
+    [self schedule:@selector(popStepAndAnimate)
+          interval:0.18
+            repeat:[self.currentMovingPath count] + 1
+             delay:0.0];
 }
 
 @end

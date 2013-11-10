@@ -21,6 +21,7 @@
 +(CCScene *) scene;
 
 
+- (ChipmunkSpace *) space;
 - (BOOL)isValidTileCoord:(CGPoint)tileCoord;
 - (CGPoint)positionForTileCoord:(CGPoint)tileCoord;
 - (BOOL)isWallAtTileCoord:(CGPoint)tileCoord;

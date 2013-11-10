@@ -26,6 +26,10 @@
 
 @implementation HelloWorldLayer
 
+- (ChipmunkSpace *) space {
+    return space;
+}
+
 // Helper class method that creates a Scene with the HelloWorldLayer as the only child.
 +(CCScene *) scene
 {
@@ -208,18 +212,16 @@
 
 -(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
 {
-//    [self setIsTouching: YES];
-//    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
-//    self->_lastTouchPoint = touchLocation;
-//	return YES;
+    [self setIsTouching: YES];
+    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
+    self->_lastTouchPoint = touchLocation;
+	return YES;
     
-    CGPoint touchLocation = [_tileMap convertTouchToNodeSpace:touch];
-    [[self monster] moveToward:touchLocation];
-    return YES;
+//    return YES;
 }
 -(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
-//    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
-//    self->_lastTouchPoint = touchLocation;
+    CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
+    self->_lastTouchPoint = touchLocation;
 }
 
 
@@ -240,6 +242,7 @@
 
 -(void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
 {
+    [[self monster] moveToward:_lastTouchPoint];
     [self setIsTouching: NO];
 }
 
