@@ -33,6 +33,7 @@
     ChipmunkBody * _leaderPoint;
     BOOL hasMoved;
     float lastAng;
+    BOOL dead;
 }
 
 // Add after @implementation CatSprite
@@ -87,9 +88,7 @@ const float half = 1.57079633;
         if (self.position.y - _leaderPoint.pos.y != 0) {
             currentAng = atanf((self.position.x - _leaderPoint.pos.x)
                                / (self.position.y - _leaderPoint.pos.y));
-        }
-        
-        ;
+        };
         
         
         if (!hasMoved) {
@@ -122,25 +121,31 @@ const float half = 1.57079633;
         ChipmunkShape *monsterShape = [[layer space] add:[ChipmunkCircleShape circleWithBody:monsterBody radius:playerRadius offset:cpvzero]];
        
         monsterShape.collisionType = @"monster";
-        
+        monsterShape.data = self;
         
         [self setChipmunkBody:monsterBody];
         
         ChipmunkBody * leaderPoint = [[layer space] add:[ChipmunkBody bodyWithMass:INFINITY andMoment:INFINITY]];
-        
        
         self->_leaderPoint = leaderPoint;
+        
+        
+        monsterBody.data = leaderPoint;
     
         ChipmunkPivotJoint* joint = [[layer space] add:[ChipmunkPivotJoint pivotJointWithBodyA:leaderPoint
                                                                                  bodyB:monsterBody
                                                                                 anchr1:cpvzero
                                                                                 anchr2:cpvzero]];
+        leaderPoint.data = joint;
         joint.maxBias = 200.0f;
         joint.maxForce = 3000.0f;
     }
     return self;
 }
 
+- (void) setAsDead {
+   dead = YES;
+}
 - (void)moveToward:(CGPoint)target {
     // Get current tile coordinate and desired tile coord
     CGPoint fromTileCoord = [_layer tileCoordForPosition:self.position];

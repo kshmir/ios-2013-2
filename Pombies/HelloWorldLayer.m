@@ -95,13 +95,12 @@
         int y = [[spawnPoint valueForKey:@"y"] intValue];
         
         [space addCollisionHandler:self
-                             typeA:@"player" typeB:@"monster"
+                             typeA:@"bullet" typeB:@"monster"
                              begin:@selector(beginCollision:space:)
                           preSolve:nil
                          postSolve:@selector(postSolveCollision:space:)
                           separate:@selector(separateCollision:space:)
          ];
-       
         
         _meta = [_tileMap layerNamed:@"Meta"];
         _meta.visible = NO;
@@ -110,13 +109,8 @@
         
         self.touchEnabled = YES;
         
-        [self setMonster:[[PMonster alloc] initWithLayer: self]];
-        
-        
-        
         [[self monster] setPosition:ccp(x,y + 32)];
         
-        [self addChild:[self monster]];
         [self createPlayer:y x:x];
         [self createTerrainGeometry];
         [self setViewPointCenter:_player.position];
@@ -129,20 +123,34 @@
 }
 
 
-- (bool)beginCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
-    CHIPMUNK_ARBITER_GET_SHAPES(arbiter, buttonShape, border);
-    NSLog(@"First object in the collision is %@ second object is %@.", buttonShape.data, border.data);
+- (bool)beginCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)sp {
     return TRUE;
 }
 
 // The post-solve collision callback is called right after Chipmunk has finished calculating all of the
 // collision responses. You can use it to find out how hard objects hit each other.
 // There is also a pre-solve callback that allows you to reject collisions conditionally.
-- (void)postSolveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
+- (void)postSolveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)sp {
+    CHIPMUNK_ARBITER_GET_SHAPES(arbiter, bullet, monster);
+    CHIPMUNK_ARBITER_GET_BODIES(arbiter, bulletBody, monsterBody);
+    
+    if ([[bullet collisionType] isEqualToString:@"bullet"]
+        && [[monster collisionType] isEqualToString:@"monster"]) {
+        [((PMonster *)[monster data]) setAsDead];
+        [self removeChild: [monster data]];
+        [self removeChild: [bullet data]];
+        [sp addPostStepBlock:^{
+            [[self space] removeShape:monster];
+            [[self space] removeShape:bullet];
+            [[self space] removeBody:monsterBody];
+            [[self space] removeBody:monsterBody.data];
+            [[self space] removeConstraint:[((ChipmunkBody *)[monsterBody data]) data]];
+            [[self space] removeBody:bulletBody];
+        } key:nil];
+    }
 }
 
-- (void)separateCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)space {
-    CHIPMUNK_ARBITER_GET_SHAPES(arbiter, buttonShape, border);
+- (void)separateCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)sp {
 }
 
 // Add new method
@@ -240,6 +248,30 @@
                                                        swallowsTouches:YES];
 }
 
+-(void) addProjectile: (CGPoint) point {
+    float radius = 5;
+    float mass = 1;
+    double diffX = point.x - _player.position.x;
+    double diffY = point.y - _player.position.y;
+    
+    double dist = sqrt(diffX * diffX + diffY * diffY);
+    ChipmunkBody *bulletBody = [space add:[ChipmunkBody bodyWithMass:mass andMoment:INFINITY]];;
+    bulletBody.pos = ccp(_player.position.x + diffX / 15, _player.position.y + diffY / 15);
+    
+    ChipmunkShape *bulletplayerShape = [space add:[ChipmunkCircleShape circleWithBody:bulletBody radius:radius offset:cpvzero]];
+    bulletplayerShape.friction = 0.0;
+    bulletplayerShape.collisionType = @"bullet";
+    
+    
+    CCPhysicsSprite * bullet = [CCPhysicsSprite spriteWithFile:@"bullet.png"];
+    [bulletplayerShape setData:bullet];
+    
+    [bulletBody applyImpulse:ccp(diffX / dist * 750, diffY / dist * 750) offset:cpvzero];
+    
+    [bullet setChipmunkBody:bulletBody];
+    [self addChild:bullet];
+}
+
 -(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
 {
     [self setIsTouching: YES];
@@ -250,17 +282,12 @@
     NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval diff = currentTime - mLastTapTime;
     
-    if(diff < 0.3 )
-    {
-        NSLog(@"double tap");
+    if (diff < 0.3) {
+        [self addProjectile: touchLocation];
     }
     mLastTapTime = [NSDate timeIntervalSinceReferenceDate];
     
-    
-    
 	return YES;
-    
-//    return YES;
 }
 -(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
     CGPoint touchLocation = [self convertTouchToNodeSpace:touch];

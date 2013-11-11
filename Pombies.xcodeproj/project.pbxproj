@@ -155,6 +155,7 @@
 		094EAEEA18301F5C0092C760 /* peron2 in Resources */ = {isa = PBXBuildFile; fileRef = 094EAEE818301F5C0092C760 /* peron2 */; };
 		094EAEEB18301F5C0092C760 /* peron1 in Resources */ = {isa = PBXBuildFile; fileRef = 094EAEE918301F5C0092C760 /* peron1 */; };
 		094EAEED183026490092C760 /* gorilazombie.png in Resources */ = {isa = PBXBuildFile; fileRef = 094EAEEC183026490092C760 /* gorilazombie.png */; };
+		094EAEEF183035B60092C760 /* bullet.png in Resources */ = {isa = PBXBuildFile; fileRef = 094EAEEE183035B60092C760 /* bullet.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -495,6 +496,7 @@
 		094EAEE818301F5C0092C760 /* peron2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = peron2; path = Resources/Custom/peron2; sourceTree = "<group>"; };
 		094EAEE918301F5C0092C760 /* peron1 */ = {isa = PBXFileReference; lastKnownFileType = file; name = peron1; path = Resources/Custom/peron1; sourceTree = "<group>"; };
 		094EAEEC183026490092C760 /* gorilazombie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gorilazombie.png; path = Resources/Custom/gorilazombie.png; sourceTree = "<group>"; };
+		094EAEEE183035B60092C760 /* bullet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bullet.png; path = Resources/Custom/bullet.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -959,6 +961,7 @@
 		0936C63B182EC9E5008C37BE /* Custom */ = {
 			isa = PBXGroup;
 			children = (
+				094EAEEE183035B60092C760 /* bullet.png */,
 				094EAEEC183026490092C760 /* gorilazombie.png */,
 				094EAEE818301F5C0092C760 /* peron2 */,
 				094EAEE918301F5C0092C760 /* peron1 */,
@@ -1104,6 +1107,7 @@
 				094EAEEB18301F5C0092C760 /* peron1 in Resources */,
 				0936C491182EC8AE008C37BE /* Default.png in Resources */,
 				0936C49B182EC8AE008C37BE /* Icon-Small-50.png in Resources */,
+				094EAEEF183035B60092C760 /* bullet.png in Resources */,
 				0936C4A6182EC8AE008C37BE /* iTunesArtwork in Resources */,
 				0936C49F182EC8AE008C37BE /* Icon-Small@2x.png in Resources */,
 				0936C634182EC9DC008C37BE /* move.caf in Resources */,

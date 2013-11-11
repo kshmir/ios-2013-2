@@ -24,6 +24,7 @@
 @property (nonatomic, retain) NSMutableArray *currentMovingPath;
 
 
+- (void) setAsDead;
 - (id)initWithLayer:(HelloWorldLayer *)layer;
 - (void)moveToward:(CGPoint)target;
 
