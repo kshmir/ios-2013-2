@@ -32,6 +32,20 @@
   </data>
  </layer>
  <objectgroup name="Objects" width="50" height="50">
-  <object name="SpawnPoint" x="794" y="1225"/>
+  <object name="SpawnPoint" x="332" y="1422" width="15" height="17"/>
+  <object name="BotSpawn" x="796" y="926" width="19" height="22"/>
+  <object name="BotSpawn" x="796" y="721" width="19" height="22"/>
+  <object name="BotSpawn" x="521" y="484" width="19" height="22"/>
+  <object name="BotSpawn" x="1062" y="498" width="19" height="22"/>
+  <object name="BotSpawn" x="320" y="1092" width="19" height="22"/>
+  <object name="BotSpawn" x="687" y="1413" width="19" height="22"/>
+  <object name="BotSpawn" x="1358" y="1412" width="19" height="22"/>
+  <object name="BotSpawn" x="1289" y="1071" width="19" height="22"/>
+  <object name="BotSpawn" x="568" y="204" width="19" height="22"/>
+  <object name="BotSpawn" x="1021" y="200" width="19" height="22"/>
+  <object name="BotSpawn" x="1347" y="197" width="19" height="22"/>
+  <object name="BotSpawn" x="1353" y="650" width="19" height="22"/>
+  <object name="BotSpawn" x="222" y="180" width="19" height="22"/>
+  <object name="BotSpawn" x="228" y="643" width="19" height="22"/>
  </objectgroup>
 </map>

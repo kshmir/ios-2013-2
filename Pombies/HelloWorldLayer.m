@@ -16,6 +16,8 @@
     CGPoint _lastTargetPoint;
     ChipmunkSpace * space;
     NSTimeInterval      mLastTapTime;
+    NSTimeInterval      mLastMoveTime;
+    int monsterCount;
 }
 
 @property (strong) CCTMXTiledMap *tileMap;
@@ -23,8 +25,8 @@
 @property (strong) CCPhysicsSprite *player;
 @property (strong) CCTMXLayer *meta;
 @property (strong) ChipmunkBody *targetPointBody;
-@property (strong) PMonster *monster;
 @property (atomic) BOOL *isTouching;
+@property (atomic) BOOL *isClicking;
 
 @end
 
@@ -58,9 +60,18 @@
 
 // Add new method
 - (void)update:(ccTime)dt {
+    
     if (self.isTouching) {
-        _lastTargetPoint = [[self targetPointBody] pos];
         [[self targetPointBody] setPos:self->_lastTouchPoint];
+    }
+    
+    if (self.isClicking) {
+        NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
+        NSTimeInterval diff = currentTime - mLastMoveTime;
+        if (diff > 0.1) {
+            [self addProjectile: _lastTouchPoint];
+            mLastMoveTime = [NSDate timeIntervalSinceReferenceDate];
+        }
     }
     
     ccTime fixed_dt = [CCDirector sharedDirector].animationInterval;
@@ -88,7 +99,8 @@
         self.meta = [_tileMap layerNamed:@"Meta"];
         _meta.visible = NO;
         
-        mLastTapTime = [NSDate timeIntervalSinceReferenceDate];
+        mLastTapTime  = [NSDate timeIntervalSinceReferenceDate];
+        mLastMoveTime = [NSDate timeIntervalSinceReferenceDate];
        
         /** Init Player And Center Camera **/
         CCTMXObjectGroup *objects = [_tileMap objectGroupNamed:@"Objects"];
@@ -112,8 +124,6 @@
         [self scheduleUpdate];
         
         self.touchEnabled = YES;
-        
-        [[self monster] setPosition:ccp(x,y + 32)];
         
         [self createPlayer:y x:x];
         [self createTerrainGeometry];
@@ -286,19 +296,20 @@
     
     NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval diff = currentTime - mLastTapTime;
-    
     if (diff < 1.0) {
-        [self addProjectile: touchLocation];
+        [self setIsTouching: YES];
         [[self targetPointBody] setPos:self->_lastTargetPoint];
     }
+    [self setIsClicking: YES];
+    [self addProjectile: touchLocation];
     mLastTapTime = [NSDate timeIntervalSinceReferenceDate];
-    [self setIsTouching: YES];
     
 	return YES;
 }
 -(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
     CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
     self->_lastTouchPoint = touchLocation;
+    _lastTargetPoint = [[self targetPointBody] pos];
 }
 
 
@@ -319,8 +330,9 @@
 
 -(void)ccTouchEnded:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    [[self monster] moveToward:ccp(_lastTouchPoint.x + 64, _lastTouchPoint.y + 64)];
+    _lastTargetPoint = [[self targetPointBody] pos];
     [self setIsTouching: NO];
+    [self setIsClicking: NO];
 }
 
 - (void)setViewPointCenter:(CGPoint) position {
