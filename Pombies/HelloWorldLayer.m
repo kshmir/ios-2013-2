@@ -8,9 +8,12 @@
 #import "HelloWorldLayer.h"
 #import "AppDelegate.h"
 #import "PMonster.h"
+#import "PBullet.h"
+
 
 @interface HelloWorldLayer() {
     CGPoint _lastTouchPoint;
+    CGPoint _lastTargetPoint;
     ChipmunkSpace * space;
     NSTimeInterval      mLastTapTime;
 }
@@ -56,6 +59,7 @@
 // Add new method
 - (void)update:(ccTime)dt {
     if (self.isTouching) {
+        _lastTargetPoint = [[self targetPointBody] pos];
         [[self targetPointBody] setPos:self->_lastTouchPoint];
     }
     
@@ -205,7 +209,6 @@
         // So we just need to truncate to an integer to convert to tile coordinates.
         int x = point.x;
         int y = point.y;
-        
         // Flip the y-coord (Cocos2D tilemap coords are flipped this way)
         y = tileCountH - 1 - y;
         
@@ -263,36 +266,39 @@
     bulletplayerShape.collisionType = @"bullet";
     
     
-    CCPhysicsSprite * bullet = [CCPhysicsSprite spriteWithFile:@"bullet.png"];
+    PBullet * bullet = [PBullet spriteWithFile:@"bullet.png" andLayer: self];
     [bulletplayerShape setData:bullet];
+    [bulletBody setData:bulletplayerShape];
     
     [bulletBody applyImpulse:ccp(diffX / dist * 750, diffY / dist * 750) offset:cpvzero];
     
     [bullet setChipmunkBody:bulletBody];
+    
+    [bullet scheduleOnce:@selector(deleteBullet) delay:5.0];
+    
     [self addChild:bullet];
 }
 
 -(BOOL) ccTouchBegan:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    [self setIsTouching: YES];
     CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
     self->_lastTouchPoint = touchLocation;
-    [[self monster] moveToward:_lastTouchPoint];
     
     NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval diff = currentTime - mLastTapTime;
     
-    if (diff < 0.3) {
+    if (diff < 1.0) {
         [self addProjectile: touchLocation];
+        [[self targetPointBody] setPos:self->_lastTargetPoint];
     }
     mLastTapTime = [NSDate timeIntervalSinceReferenceDate];
+    [self setIsTouching: YES];
     
 	return YES;
 }
 -(void) ccTouchMoved:(UITouch *)touch withEvent:(UIEvent *)event {
     CGPoint touchLocation = [self convertTouchToNodeSpace:touch];
     self->_lastTouchPoint = touchLocation;
-    [[self monster] moveToward:ccp(_lastTouchPoint.x + 64, _lastTouchPoint.y + 64)];
 }
 
 
