@@ -18,11 +18,13 @@
     NSTimeInterval      mLastTapTime;
     NSTimeInterval      mLastMoveTime;
     int monsterCount;
+    NSMutableArray * spawnPoints;
 }
+
+#define MONSTER_LIMIT 15
 
 @property (strong) CCTMXTiledMap *tileMap;
 @property (strong) CCTMXLayer *background;
-@property (strong) CCPhysicsSprite *player;
 @property (strong) CCTMXLayer *meta;
 @property (strong) ChipmunkBody *targetPointBody;
 @property (atomic) BOOL *isTouching;
@@ -69,7 +71,6 @@
         NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
         NSTimeInterval diff = currentTime - mLastMoveTime;
         if (diff > 0.1) {
-            [self addProjectile: _lastTouchPoint];
             mLastMoveTime = [NSDate timeIntervalSinceReferenceDate];
         }
     }
@@ -106,9 +107,21 @@
         CCTMXObjectGroup *objects = [_tileMap objectGroupNamed:@"Objects"];
         NSAssert(objects != nil, @"'Objects' object group not found");
         NSMutableDictionary *spawnPoint = [objects objectNamed:@"SpawnPoint"];
+        
         NSAssert(spawnPoint != nil, @"SpawnPoint object not found");
         int x = [[spawnPoint valueForKey:@"x"] intValue];
         int y = [[spawnPoint valueForKey:@"y"] intValue];
+        
+        NSMutableArray * array = [objects objects];
+        
+        spawnPoints = [[NSMutableArray alloc] init];
+
+        for (NSMutableDictionary * object in array) {
+            if ([[object valueForKey:@"name"] isEqualToString:@"BotSpawn"]) {
+                [spawnPoints addObject: object];
+            }
+        }
+        
         
         [space addCollisionHandler:self
                              typeA:@"bullet" typeB:@"monster"
@@ -132,8 +145,32 @@
         CCPhysicsDebugNode *debugNode = [CCPhysicsDebugNode debugNodeForChipmunkSpace:space];
         [self addChild:debugNode];
         
+        [self schedule:@selector(addRandomZombie) interval:0.1];
+        
     }
     return self;
+}
+
+- (NSDictionary *) randomSpawnPoint {
+    int index = (int) ((rand() * 1.0 / RAND_MAX) * [spawnPoints count]);
+    return [spawnPoints objectAtIndex:index];
+}
+
+- (void) addRandomZombie {
+    
+    if (monsterCount < MONSTER_LIMIT) {
+        NSDictionary * spawnPoint = [self randomSpawnPoint];
+        int x = [[spawnPoint valueForKey:@"x"] intValue];
+        int y = [[spawnPoint valueForKey:@"y"] intValue];
+        
+        PMonster * monster = [[PMonster alloc] initWithLayer:self];
+        
+        [self addChild:monster];
+        
+        monster.position = ccp(x,y);
+        
+        monsterCount++;
+    }
 }
 
 
@@ -150,17 +187,24 @@
     
     if ([[bullet collisionType] isEqualToString:@"bullet"]
         && [[monster collisionType] isEqualToString:@"monster"]) {
-        [((PMonster *)[monster data]) setAsDead];
-        [self removeChild: [monster data]];
-        [self removeChild: [bullet data]];
-        [sp addPostStepBlock:^{
-            [[self space] removeShape:monster];
-            [[self space] removeShape:bullet];
-            [[self space] removeBody:monsterBody];
-            [[self space] removeBody:monsterBody.data];
-            [[self space] removeConstraint:[((ChipmunkBody *)[monsterBody data]) data]];
-            [[self space] removeBody:bulletBody];
-        } key:nil];
+        @try {
+            monsterCount--;
+            [sp addPostStepBlock:^{
+                [[self space] removeShape:monster];
+                [[self space] removeShape:bullet];
+                [[self space] removeBody:monsterBody];
+                [[self space] removeBody:monsterBody.data];
+                [[self space] removeConstraint:[((ChipmunkBody *)[monsterBody data]) data]];
+                [[self space] removeBody:bulletBody];
+                [self removeChild: [monster data]];
+                [self removeChild: [bullet data]];
+            } key:nil];
+        }
+        @catch (NSException *exception) {
+            
+        }
+        @finally {
+        }
     }
 }
 

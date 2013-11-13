@@ -34,7 +34,12 @@
     BOOL hasMoved;
     float lastAng;
     BOOL dead;
+    BOOL moving;
+    int state;
 }
+
+#define PATROL 0
+#define ATTACK 1
 
 // Add after @implementation CatSprite
 @synthesize spOpenSteps;
@@ -139,10 +144,45 @@ const float half = 1.57079633;
         leaderPoint.data = joint;
         joint.maxBias = 200.0f;
         joint.maxForce = 3000.0f;
+        
+        [self schedule:@selector(tick) interval:0.4];
     }
     return self;
 }
 
+
+- (CGPoint) randomPoint {
+    NSArray * points = [_layer walkableAdjacentTilesCoordForTileCoord: [_layer tileCoordForPosition:self.position]];
+    int index = (int) ((rand() * 1.0 / RAND_MAX) * [points count]);
+    return [((NSValue *) [points objectAtIndex:index]) CGPointValue];
+}
+
+- (float) distToPlayer {
+    CGPoint playerPosition = [[_layer player] position];
+    CGPoint myPosition = [self position];
+    
+    float diffX = playerPosition.x - myPosition.x;
+    float diffY = playerPosition.y - myPosition.y;
+    
+    return sqrt(diffX * diffX + diffY * diffY);
+}
+
+- (void) tick {
+    if (!moving) {
+        if ([self distToPlayer] < 480) {
+            [self moveToward:[[_layer player]position]];
+        }
+       
+        if (!moving) {
+            [_leaderPoint setPos:[_layer positionForTileCoord:[self randomPoint]]];
+        }
+    }
+}
+
+- (void) setPosition:(CGPoint)position {
+    self->_leaderPoint.pos = position;
+    [super setPosition:position];
+}
 - (void) setAsDead {
    dead = YES;
 }
@@ -150,15 +190,6 @@ const float half = 1.57079633;
     // Get current tile coordinate and desired tile coord
     CGPoint fromTileCoord = [_layer tileCoordForPosition:self.position];
     CGPoint toTileCoord = [_layer tileCoordForPosition:target];
-    
-    // Check that there is a path to compute ;-)
-    if (CGPointEqualToPoint(fromTileCoord, toTileCoord)) {
-        NSLog(@"You're already there! :P");
-        return;
-    }
-    
-    NSLog(@"From: %@", NSStringFromCGPoint(fromTileCoord));
-    NSLog(@"To: %@", NSStringFromCGPoint(toTileCoord));
     
     BOOL pathFound = NO;
     self.spOpenSteps = [[NSMutableArray alloc] init];
@@ -179,15 +210,18 @@ const float half = 1.57079633;
         // Note that if we wanted to first removing from the open list, care should be taken to the memory
         [self.spOpenSteps removeObjectAtIndex:0];
         
+        if ([self.spOpenSteps count] > 10000) {
+            pathFound = NO;
+            break;
+        }
+        
         // If the currentStep is the desired tile coordinate, we are done!
         if (CGPointEqualToPoint(currentStep.position, toTileCoord)) {
             
             [self constructPathAndStartAnimationFromStep:currentStep];
             pathFound = YES;
             ShortestPathStep *tmpStep = currentStep;
-            NSLog(@"PATH FOUND :");
             do {
-                NSLog(@"%@", tmpStep);
                 tmpStep = tmpStep.parent; // Go backward
             } while (tmpStep != nil); // Until there is not more parent
             
@@ -249,10 +283,11 @@ const float half = 1.57079633;
 
 - (void)popStepAndAnimate
 {
+    NSLog(@"Start animate");
 	// Check if there remains path steps to go through
 	if ([self.currentMovingPath count] == 0) {
 		self.currentMovingPath = nil;
-        NSLog(@"out!");
+        moving = NO;
 		return;
 	}
     
@@ -262,12 +297,12 @@ const float half = 1.57079633;
     [_leaderPoint setPos:[_layer positionForTileCoord:s.position]];
    
     [[self currentMovingPath] removeObjectAtIndex:0];
-    
-    NSLog(@"update!");
+    NSLog(@"End animate");
 }
 
 - (void)constructPathAndStartAnimationFromStep:(ShortestPathStep *)step
 {
+    moving = YES;
     self.shortestPath = [NSMutableArray array];
     
 	do {
@@ -278,6 +313,7 @@ const float half = 1.57079633;
 	} while (step != nil); // Until there is no more parents
     
     [self setCurrentMovingPath: [[NSMutableArray alloc] initWithArray:[self.shortestPath copy]]];
+    [self unschedule:@selector(popStepAndAnimate)];
     [self schedule:@selector(popStepAndAnimate)
           interval:0.18
             repeat:[self.currentMovingPath count] + 1

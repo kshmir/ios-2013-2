@@ -20,6 +20,7 @@
 // returns a CCScene that contains the HelloWorldLayer as the only child
 +(CCScene *) scene;
 
+@property (strong) CCPhysicsSprite *player;
 
 - (ChipmunkSpace *) space;
 - (BOOL)isValidTileCoord:(CGPoint)tileCoord;
