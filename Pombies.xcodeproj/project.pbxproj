@@ -157,6 +157,7 @@
 		094EAEED183026490092C760 /* gorilazombie.png in Resources */ = {isa = PBXBuildFile; fileRef = 094EAEEC183026490092C760 /* gorilazombie.png */; };
 		094EAEEF183035B60092C760 /* bullet.png in Resources */ = {isa = PBXBuildFile; fileRef = 094EAEEE183035B60092C760 /* bullet.png */; };
 		094EAEF2183059390092C760 /* PBullet.m in Sources */ = {isa = PBXBuildFile; fileRef = 094EAEF1183059390092C760 /* PBullet.m */; };
+		0980AE94183EAEFC00DCA16F /* PGUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 0980AE93183EAEFC00DCA16F /* PGUI.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -500,6 +501,8 @@
 		094EAEEE183035B60092C760 /* bullet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bullet.png; path = Resources/Custom/bullet.png; sourceTree = "<group>"; };
 		094EAEF0183059390092C760 /* PBullet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBullet.h; sourceTree = "<group>"; };
 		094EAEF1183059390092C760 /* PBullet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBullet.m; sourceTree = "<group>"; };
+		0980AE92183EAEFC00DCA16F /* PGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGUI.h; path = Pombies/PGUI.h; sourceTree = "<group>"; };
+		0980AE93183EAEFC00DCA16F /* PGUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGUI.m; path = Pombies/PGUI.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -528,6 +531,8 @@
 		0936C46E182EC8AE008C37BE = {
 			isa = PBXGroup;
 			children = (
+				0980AE92183EAEFC00DCA16F /* PGUI.h */,
+				0980AE93183EAEFC00DCA16F /* PGUI.m */,
 				094EAEF0183059390092C760 /* PBullet.h */,
 				094EAEF1183059390092C760 /* PBullet.m */,
 				094EAEE5182FE3CF0092C760 /* PMonster.h */,
@@ -1158,6 +1163,7 @@
 				0936C4EE182EC8AF008C37BE /* CCDrawNode.m in Sources */,
 				0936C580182EC8B0008C37BE /* CCTransitionPageTurn.m in Sources */,
 				0936C4B1182EC8AE008C37BE /* CCActionCatmullRom.m in Sources */,
+				0980AE94183EAEFC00DCA16F /* PGUI.m in Sources */,
 				0936C528182EC8AF008C37BE /* CCParticleSystem.m in Sources */,
 				0936C57D182EC8B0008C37BE /* CCTransition.m in Sources */,
 				0936C525182EC8AF008C37BE /* CCParticleExamples.m in Sources */,

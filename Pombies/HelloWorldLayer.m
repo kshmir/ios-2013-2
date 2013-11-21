@@ -92,7 +92,6 @@
         
         [self addChild:_tileMap z:-1];
         
-        // Comment out the lines that create the label in init, and add this:
         [self createSpace];
 
         [self setIsTouching:NO];
@@ -103,7 +102,6 @@
         mLastTapTime  = [NSDate timeIntervalSinceReferenceDate];
         mLastMoveTime = [NSDate timeIntervalSinceReferenceDate];
        
-        /** Init Player And Center Camera **/
         CCTMXObjectGroup *objects = [_tileMap objectGroupNamed:@"Objects"];
         NSAssert(objects != nil, @"'Objects' object group not found");
         NSMutableDictionary *spawnPoint = [objects objectNamed:@"SpawnPoint"];
@@ -157,7 +155,6 @@
 }
 
 - (void) addRandomZombie {
-    
     if (monsterCount < MONSTER_LIMIT) {
         NSDictionary * spawnPoint = [self randomSpawnPoint];
         int x = [[spawnPoint valueForKey:@"x"] intValue];
