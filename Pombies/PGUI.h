@@ -11,5 +11,9 @@
 #import "cocos2d.h"
 
 @interface PGUI : CCLayer
-+ (void) create: (HelloWorldLayer *) layer;
++ (PGUI *) create;
+
+
+- (void) setScore: (int)score;
+- (void) setLiveCount: (int)lives;
 @end

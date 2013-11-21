@@ -493,16 +493,16 @@
 		094EAEE2182F479D0092C760 /* cpSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpSpace.h; sourceTree = "<group>"; };
 		094EAEE3182F479D0092C760 /* cpSpatialIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpSpatialIndex.h; sourceTree = "<group>"; };
 		094EAEE4182F479D0092C760 /* cpVect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cpVect.h; sourceTree = "<group>"; };
-		094EAEE5182FE3CF0092C760 /* PMonster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMonster.h; sourceTree = "<group>"; };
-		094EAEE6182FE3CF0092C760 /* PMonster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMonster.m; sourceTree = "<group>"; };
+		094EAEE5182FE3CF0092C760 /* PMonster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PMonster.h; path = ../PMonster.h; sourceTree = "<group>"; };
+		094EAEE6182FE3CF0092C760 /* PMonster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PMonster.m; path = ../PMonster.m; sourceTree = "<group>"; };
 		094EAEE818301F5C0092C760 /* peron2 */ = {isa = PBXFileReference; lastKnownFileType = file; name = peron2; path = Resources/Custom/peron2; sourceTree = "<group>"; };
 		094EAEE918301F5C0092C760 /* peron1 */ = {isa = PBXFileReference; lastKnownFileType = file; name = peron1; path = Resources/Custom/peron1; sourceTree = "<group>"; };
 		094EAEEC183026490092C760 /* gorilazombie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gorilazombie.png; path = Resources/Custom/gorilazombie.png; sourceTree = "<group>"; };
 		094EAEEE183035B60092C760 /* bullet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bullet.png; path = Resources/Custom/bullet.png; sourceTree = "<group>"; };
-		094EAEF0183059390092C760 /* PBullet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBullet.h; sourceTree = "<group>"; };
-		094EAEF1183059390092C760 /* PBullet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBullet.m; sourceTree = "<group>"; };
-		0980AE92183EAEFC00DCA16F /* PGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGUI.h; path = Pombies/PGUI.h; sourceTree = "<group>"; };
-		0980AE93183EAEFC00DCA16F /* PGUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGUI.m; path = Pombies/PGUI.m; sourceTree = "<group>"; };
+		094EAEF0183059390092C760 /* PBullet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PBullet.h; path = ../PBullet.h; sourceTree = "<group>"; };
+		094EAEF1183059390092C760 /* PBullet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PBullet.m; path = ../PBullet.m; sourceTree = "<group>"; };
+		0980AE92183EAEFC00DCA16F /* PGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGUI.h; sourceTree = "<group>"; };
+		0980AE93183EAEFC00DCA16F /* PGUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGUI.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -531,12 +531,6 @@
 		0936C46E182EC8AE008C37BE = {
 			isa = PBXGroup;
 			children = (
-				0980AE92183EAEFC00DCA16F /* PGUI.h */,
-				0980AE93183EAEFC00DCA16F /* PGUI.m */,
-				094EAEF0183059390092C760 /* PBullet.h */,
-				094EAEF1183059390092C760 /* PBullet.m */,
-				094EAEE5182FE3CF0092C760 /* PMonster.h */,
-				094EAEE6182FE3CF0092C760 /* PMonster.m */,
 				0936C48E182EC8AE008C37BE /* Pombies */,
 				0936C479182EC8AE008C37BE /* Frameworks */,
 				0936C478182EC8AE008C37BE /* Products */,
@@ -572,6 +566,12 @@
 		0936C48E182EC8AE008C37BE /* Pombies */ = {
 			isa = PBXGroup;
 			children = (
+				0980AE92183EAEFC00DCA16F /* PGUI.h */,
+				0980AE93183EAEFC00DCA16F /* PGUI.m */,
+				094EAEF0183059390092C760 /* PBullet.h */,
+				094EAEF1183059390092C760 /* PBullet.m */,
+				094EAEE5182FE3CF0092C760 /* PMonster.h */,
+				094EAEE6182FE3CF0092C760 /* PMonster.m */,
 				0936C61F182EC8B0008C37BE /* AppDelegate.h */,
 				0936C620182EC8B0008C37BE /* AppDelegate.m */,
 				0936C622182EC8B0008C37BE /* HelloWorldLayer.h */,

@@ -9,7 +9,7 @@
 #import "AppDelegate.h"
 #import "PMonster.h"
 #import "PBullet.h"
-
+#import "PGUI.h"
 
 @interface HelloWorldLayer() {
     CGPoint _lastTouchPoint;
@@ -19,6 +19,9 @@
     NSTimeInterval      mLastMoveTime;
     int monsterCount;
     NSMutableArray * spawnPoints;
+    PGUI * gui;
+    int score;
+    int lives;
 }
 
 #define MONSTER_LIMIT 15
@@ -45,7 +48,7 @@
 	CCScene *scene = [CCScene node];
     
 	// 'layer' is an autorelease object.
-	HelloWorldLayer *layer = [HelloWorldLayer node];
+	HelloWorldLayer *layer = [HelloWorldLayer create: scene];
 
     
 	// add layer as a child to scene
@@ -83,70 +86,79 @@
 }
 
 
-
--(id) init
++(id) create: (CCScene *) scene
 {
-	if( (self=[super init]) ) {
-        self.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"pv.tmx"];
-        self.background = [self.tileMap layerNamed:@"Transparentes"];
-        
-        [self addChild:_tileMap z:-1];
-        
-        [self createSpace];
-
-        [self setIsTouching:NO];
-        
-        self.meta = [_tileMap layerNamed:@"Meta"];
-        _meta.visible = NO;
-        
-        mLastTapTime  = [NSDate timeIntervalSinceReferenceDate];
-        mLastMoveTime = [NSDate timeIntervalSinceReferenceDate];
-       
-        CCTMXObjectGroup *objects = [_tileMap objectGroupNamed:@"Objects"];
-        NSAssert(objects != nil, @"'Objects' object group not found");
-        NSMutableDictionary *spawnPoint = [objects objectNamed:@"SpawnPoint"];
-        
-        NSAssert(spawnPoint != nil, @"SpawnPoint object not found");
-        int x = [[spawnPoint valueForKey:@"x"] intValue];
-        int y = [[spawnPoint valueForKey:@"y"] intValue];
-        
-        NSMutableArray * array = [objects objects];
-        
-        spawnPoints = [[NSMutableArray alloc] init];
-
-        for (NSMutableDictionary * object in array) {
-            if ([[object valueForKey:@"name"] isEqualToString:@"BotSpawn"]) {
-                [spawnPoints addObject: object];
-            }
+    HelloWorldLayer * layer = [HelloWorldLayer node];
+    layer.tileMap = [CCTMXTiledMap tiledMapWithTMXFile:@"pv.tmx"];
+    layer.background = [layer.tileMap layerNamed:@"Transparentes"];
+    
+    [layer addChild:layer->_tileMap z:-1];
+    
+    [layer createSpace];
+    
+    [layer setIsTouching:NO];
+    
+    layer.meta = [layer->_tileMap layerNamed:@"Meta"];
+    layer->_meta.visible = NO;
+    
+    layer->mLastTapTime  = [NSDate timeIntervalSinceReferenceDate];
+    layer->mLastMoveTime = [NSDate timeIntervalSinceReferenceDate];
+    
+    CCTMXObjectGroup *objects = [layer->_tileMap objectGroupNamed:@"Objects"];
+    NSAssert(objects != nil, @"'Objects' object group not found");
+    NSMutableDictionary *spawnPoint = [objects objectNamed:@"SpawnPoint"];
+    
+    NSAssert(spawnPoint != nil, @"SpawnPoint object not found");
+    int x = [[spawnPoint valueForKey:@"x"] intValue];
+    int y = [[spawnPoint valueForKey:@"y"] intValue];
+    
+    NSMutableArray * array = [objects objects];
+    
+    layer->spawnPoints = [[NSMutableArray alloc] init];
+    
+    for (NSMutableDictionary * object in array) {
+        if ([[object valueForKey:@"name"] isEqualToString:@"BotSpawn"]) {
+            [layer->spawnPoints addObject: object];
         }
-        
-        
-        [space addCollisionHandler:self
-                             typeA:@"bullet" typeB:@"monster"
-                             begin:@selector(beginCollision:space:)
-                          preSolve:nil
-                         postSolve:@selector(postSolveCollision:space:)
-                          separate:@selector(separateCollision:space:)
-         ];
-        
-        _meta = [_tileMap layerNamed:@"Meta"];
-        _meta.visible = NO;
-        
-        [self scheduleUpdate];
-        
-        self.touchEnabled = YES;
-        
-        [self createPlayer:y x:x];
-        [self createTerrainGeometry];
-        [self setViewPointCenter:_player.position];
-        
-        CCPhysicsDebugNode *debugNode = [CCPhysicsDebugNode debugNodeForChipmunkSpace:space];
-        [self addChild:debugNode];
-        
-        [self schedule:@selector(addRandomZombie) interval:0.1];
-        
     }
-    return self;
+    
+    
+    [[layer space] addCollisionHandler:layer
+                                 typeA:@"bullet" typeB:@"monster"
+                                 begin:@selector(beginCollision:space:)
+                              preSolve:nil
+                             postSolve:@selector(postSolveCollision:space:)
+                              separate:@selector(separateCollision:space:)
+     ];
+    
+       [[layer space] addCollisionHandler:layer
+                                 typeA:@"player" typeB:@"monster"
+                                 begin:@selector(beginCollision:space:)
+                              preSolve:nil
+                             postSolve:@selector(postSolveCollision:space:)
+                              separate:@selector(separateCollision:space:)
+        ];
+    
+    layer->_meta = [layer->_tileMap layerNamed:@"Meta"];
+    layer->_meta.visible = NO;
+    
+    [layer scheduleUpdate];
+    
+    PGUI * gui = [PGUI create];
+    
+    layer->lives = 10;
+    layer->gui = gui;
+    layer.touchEnabled = YES;
+    
+    [scene addChild:gui z:1000];
+    
+    [layer createPlayer:y x:x];
+    [layer createTerrainGeometry];
+    [layer setViewPointCenter:layer->_player.position];
+    
+    [layer schedule:@selector(addRandomZombie) interval:0.1];
+    
+    return layer;
 }
 
 - (NSDictionary *) randomSpawnPoint {
@@ -175,26 +187,32 @@
     return TRUE;
 }
 
+- (void) reload {
+   	[[CCDirector sharedDirector] replaceScene:[CCTransitionFade transitionWithDuration:1.0 scene:[HelloWorldLayer scene] ]];
+}
 // The post-solve collision callback is called right after Chipmunk has finished calculating all of the
 // collision responses. You can use it to find out how hard objects hit each other.
 // There is also a pre-solve callback that allows you to reject collisions conditionally.
 - (void)postSolveCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)sp {
-    CHIPMUNK_ARBITER_GET_SHAPES(arbiter, bullet, monster);
-    CHIPMUNK_ARBITER_GET_BODIES(arbiter, bulletBody, monsterBody);
+    CHIPMUNK_ARBITER_GET_SHAPES(arbiter, base, monster);
+    CHIPMUNK_ARBITER_GET_BODIES(arbiter, baseBody, monsterBody);
     
-    if ([[bullet collisionType] isEqualToString:@"bullet"]
+    if ([[base collisionType] isEqualToString:@"bullet"]
         && [[monster collisionType] isEqualToString:@"monster"]) {
+
+        [gui setScore: ++score];
+        
         @try {
             monsterCount--;
             [sp addPostStepBlock:^{
                 [[self space] removeShape:monster];
-                [[self space] removeShape:bullet];
+                [[self space] removeShape:base];
                 [[self space] removeBody:monsterBody];
                 [[self space] removeBody:monsterBody.data];
                 [[self space] removeConstraint:[((ChipmunkBody *)[monsterBody data]) data]];
-                [[self space] removeBody:bulletBody];
+                [[self space] removeBody:baseBody];
                 [self removeChild: [monster data]];
-                [self removeChild: [bullet data]];
+                [self removeChild: [base data]];
             } key:nil];
         }
         @catch (NSException *exception) {
@@ -203,6 +221,32 @@
         @finally {
         }
     }
+    
+    
+       if ([[base collisionType] isEqualToString:@"player"]
+        && [[monster collisionType] isEqualToString:@"monster"]) {
+
+        [gui setLiveCount:--lives];
+        
+        @try {
+            monsterCount--;
+            [sp addPostStepBlock:^{
+                [[self space] removeShape:monster];
+                [[self space] removeBody:monsterBody];
+                [[self space] removeBody:monsterBody.data];
+                [[self space] removeConstraint:[((ChipmunkBody *)[monsterBody data]) data]];
+                [self removeChild: [monster data]];
+                if (lives == 0) {
+                    [self reload];
+                }
+            } key:nil];
+        }
+        @catch (NSException *exception) {
+            
+        }
+        @finally {
+        }
+       }
 }
 
 - (void)separateCollision:(cpArbiter*)arbiter space:(ChipmunkSpace*)sp {
@@ -277,7 +321,7 @@
     cpFloat tileH = _tileMap.tileSize.height;
     
     for(ChipmunkPolyline * line in polylines){
-        ChipmunkPolyline * simplified = [line simplifyCurves:1.0f];
+        ChipmunkPolyline * simplified = [line simplifyCurves:0.0f];
         for(int i=0; i<simplified.count-1; i++){
             
             // The sampler coordinates were in tile coordinates.

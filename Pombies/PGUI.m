@@ -8,26 +8,40 @@
 
 #import "PGUI.h"
 
-@implementation PGUI
+@implementation PGUI {
+    CCLabelTTF * scoreText;
+    CCLabelTTF * liveCount;
+}
 
-+ (void) create: (HelloWorldLayer *) layer {
+- (void) setScore: (int)score {
+    [self->scoreText setString:[NSString stringWithFormat:@"Score: %d", score]];
+}
+
+- (void) setLiveCount: (int)lives {
+    [self->liveCount setString:[NSString stringWithFormat:@"Lives: %d", lives]];
+}
+
++ (PGUI *) create {
     CGSize winSize = [[CCDirector sharedDirector] winSize];
     PGUI * gui = [[PGUI alloc] init];
   
-    CCLabelTTF * scoreText = [CCLabelTTF labelWithString:@"0" fontName:@"Verdana" fontSize:14.0];
-    
+    CCLabelTTF * scoreText = [CCLabelTTF labelWithString:@"Score: 0" fontName:@"Verdana" fontSize:14.0];
     [scoreText setColor:ccc3(0,0,0)];
     [scoreText setPosition:ccp(winSize.width / 2, [scoreText contentSize].height)];
     
-    CCSprite * live = [CCSprite spriteWithFile:@"live.png"];
-    [live setScale: 0.5];
-    CCLabelTTF * liveCount = [CCLabelTTF labelWithString:@"x 5" fontName:@"Verdana" fontSize:14.0];
+    CCLabelTTF * liveCount = [CCLabelTTF labelWithString:@"Lives: 10" fontName:@"Verdana" fontSize:14.0];
     [liveCount setColor:ccc3(0,0,0)];
+    [liveCount setPosition:ccp(winSize.width / 2,
+                               winSize.height - [liveCount contentSize].height * 2)];
+
+    
+    gui->scoreText = scoreText;
+    gui->liveCount = liveCount;
     
     [gui addChild: liveCount];
     [gui addChild: scoreText];
     
-    [layer addChild: gui];
+    return gui;
 }
 
 @end
