@@ -1317,8 +1317,8 @@
 				INFOPLIST_FILE = Pombies/Resources/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/cris/src/itba/pombies/Pombies/Pombies,
-					"/Users/cris/src/itba/pombies/Pombies/Pombies/libs/ChipmunkPro/**",
+					Pombies/Pombies,
+					"Pombies/libs/ChipmunkPro/**",
 				);
 				OTHER_LDFLAGS = (
 					"-lz",
@@ -1347,8 +1347,8 @@
 				INFOPLIST_FILE = Pombies/Resources/Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/Users/cris/src/itba/pombies/Pombies/Pombies,
-					"/Users/cris/src/itba/pombies/Pombies/Pombies/libs/ChipmunkPro/**",
+					Pombies/Pombies,
+					"Pombies/libs/ChipmunkPro/**",
 				);
 				OTHER_LDFLAGS = (
 					"-lz",
